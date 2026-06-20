@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "open-meteo",
+    "kind": "weather-forecast",
+    "city": "Tokyo",
+    "latitude": 35.5494,
+    "longitude": 139.7798,
+    "temperature_unit": "celsius",
+    "station": "Tokyo Haneda Airport",
+    "fetched_at_utc": "2026-06-20T16:11:54.690020+00:00"
+  },
+  "response": {
+    "latitude": 35.55,
+    "longitude": 139.75,
+    "generationtime_ms": 0.05900859832763672,
+    "utc_offset_seconds": 32400,
+    "timezone": "Asia/Tokyo",
+    "timezone_abbreviation": "GMT+9",
+    "elevation": 3.0,
+    "daily_units": {
+      "time": "iso8601",
+      "temperature_2m_max": "°C",
+      "temperature_2m_min": "°C"
+    },
+    "daily": {
+      "time": [
+        "2026-06-21",
+        "2026-06-22",
+        "2026-06-23"
+      ],
+      "temperature_2m_max": [
+        28.4,
+        25.6,
+        23.8
+      ],
+      "temperature_2m_min": [
+        21.7,
+        19.7,
+        19.0
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m venv .venv)",
+      "Bash(.venv/bin/pip install *)",
+      "Bash(.venv/bin/pip list *)",
+      "Bash(cd \"/Users/erikwegner/Documents/master/semester_2/Data_Engineering /p_2\" && mkdir -p .github/workflows && echo \"created .github/workflows\")"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local config
+.env
+
+# Cron / run logs
+cron.log
+*.log
+
+# Raw data IS tracked in git on purpose: GitHub Actions is the gap-free
+# collector and commits each hourly snapshot back here, so the repo itself is
+# the accumulating dataset (and a reproducible seminar deliverable).
+# Processed/ stays out of git — it is regenerated from raw by the later step.
+data/processed/*
+!data/processed/.gitkeep

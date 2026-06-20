@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "open-meteo",
+    "kind": "weather-forecast",
+    "city": "NYC",
+    "latitude": 40.7769,
+    "longitude": -73.874,
+    "temperature_unit": "fahrenheit",
+    "station": "LaGuardia Airport",
+    "fetched_at_utc": "2026-06-20T16:11:54.475429+00:00"
+  },
+  "response": {
+    "latitude": 40.76809,
+    "longitude": -73.862785,
+    "generationtime_ms": 0.03731250762939453,
+    "utc_offset_seconds": -14400,
+    "timezone": "America/New_York",
+    "timezone_abbreviation": "GMT-4",
+    "elevation": 1.0,
+    "daily_units": {
+      "time": "iso8601",
+      "temperature_2m_max": "°F",
+      "temperature_2m_min": "°F"
+    },
+    "daily": {
+      "time": [
+        "2026-06-20",
+        "2026-06-21",
+        "2026-06-22"
+      ],
+      "temperature_2m_max": [
+        84.4,
+        83.4,
+        69.6
+      ],
+      "temperature_2m_min": [
+        66.3,
+        65.4,
+        63.1
+      ]
+    }
+  }
+}

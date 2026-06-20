@@ -1,0 +1,61 @@
+name: hourly-ingestion
+
+# Gap-free data collection that does NOT depend on a laptop being awake.
+# Runs on GitHub's servers every hour, runs the ingestion, and commits the new
+# raw snapshots back into the repo so the dataset accumulates in version control.
+#
+# Notes / caveats (for the report):
+# - Cron is in UTC. GitHub may delay scheduled runs by several minutes under
+#   load, and on rare occasions skip one. For hourly weather-market snapshots
+#   that jitter is acceptable; it is still vastly more reliable than a laptop.
+# - Scheduled workflows need repo activity within 60 days or GitHub disables
+#   them. The hourly data commits keep the repo active, so this self-sustains.
+# - Use a PUBLIC repo for unlimited Actions minutes (the data is public anyway).
+
+on:
+  schedule:
+    - cron: "0 * * * *"      # top of every hour, UTC
+  workflow_dispatch: {}       # allow manual "Run workflow" from the Actions tab
+
+# Allow the job to push commits back to the repo.
+permissions:
+  contents: write
+
+# Never let two ingestion runs overlap (would race on the git push).
+concurrency:
+  group: ingestion
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run ingestion
+        run: python run_ingestion.py
+
+      - name: Commit new raw snapshots
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw
+          if git diff --cached --quiet; then
+            echo "No new data this run."
+          else
+            git commit -m "data: ingestion snapshot $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
+            # Rebase on any concurrent change, then push.
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
