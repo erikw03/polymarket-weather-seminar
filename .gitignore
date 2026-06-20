@@ -17,3 +17,6 @@ cron.log
 # Processed/ stays out of git — it is regenerated from raw by the later step.
 data/processed/*
 !data/processed/.gitkeep
+
+# Local Claude Code state
+.claude/
