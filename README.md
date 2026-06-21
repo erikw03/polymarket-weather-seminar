@@ -143,6 +143,40 @@ per city), not thousands of tiny snapshots:
 - **Externalised config.** Cities and tunables live in `config.py` / `.env`, so
   scaling from "Munich only" to many cities needs no code change.
 
+## Transformation layer (raw → DuckDB)
+
+`build_processed.py` turns the raw zone (live NDJSON + historical backfill) into
+clean, typed, analysis-ready tables in `data/processed/temperature_markets.duckdb`.
+It is **idempotent** — it drops and rebuilds everything from the raw zone on each
+run, so re-run it any time after pulling fresh data:
+
+```bash
+python build_processed.py
+```
+
+Design choices: main fact grain = (city, target_date, snapshot_time, bucket);
+all temperatures normalized to **°C** (native value kept too); ground truth =
+the market's **resolved bucket** (official station reading), with ERA5 archive as
+an auxiliary actual. The DuckDB file is a *derived artifact* — git-ignored and
+regenerated, never hand-edited (raw zone stays the single source of truth).
+
+Tables:
+- **`fact_price`** — one row per bucket per snapshot: `yes_price` (implied prob),
+  `bucket_low_c/high_c/mid_c`, `hours_to_close`, `source` (live/backfill).
+- **`fact_forecast`** — issued forecast max/min (°C) per city/target_date/fetch.
+- **`dim_outcome`** — resolved bucket (station truth, °C) + ERA5 actual per market.
+- **`mart_market_vs_forecast_vs_actual`** (view) — one row per resolved market
+  comparing the market's near-close mode, the forecast, and the actual.
+
+Example query:
+
+```sql
+SELECT city, ROUND(AVG(ABS(market_mode_c - actual_station_c)),2) AS market_mae_c,
+             ROUND(AVG(ABS(forecast_max_c - actual_station_c)),2) AS forecast_mae_c
+FROM mart_market_vs_forecast_vs_actual
+WHERE market_mode_c IS NOT NULL GROUP BY city;
+```
+
 ## Data-quality caveats (to address in the report)
 
 - **Two different "actuals".** Polymarket settles on the official station reading
