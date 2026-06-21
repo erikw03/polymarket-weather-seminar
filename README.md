@@ -105,6 +105,24 @@ python backfill_forecast.py 2026-06-16 2026-06-19   # inclusive, YYYY-MM-DD
 
 This writes `weather-historical-forecast_*.json` snapshots into the raw zone.
 
+### Historical backfill (the ML dataset)
+
+`backfill_history.py` reconstructs *months* of already-resolved markets — the
+biggest lever for dataset size. For every past day it fetches the resolved market
+(winning temperature bucket), the full **hourly YES-price trajectory** of every
+bucket (CLOB `/prices-history` with explicit `startTs`/`endTs` — `interval=max`
+returns nothing for older markets), plus the issued forecast and observed actuals.
+
+```bash
+python backfill_history.py 2026-03-01 2026-06-20    # all configured cities
+```
+
+Output is a handful of **consolidated** files under `data/backfill/` (one pair
+per city), not thousands of tiny snapshots:
+`polymarket_<city>_history.json` (markets → buckets → trajectories → outcome) and
+`weather_<city>_history.json`. A March–June run yields ~420 resolved city-days and
+~240k price points in ~8 MB.
+
 ## Design decisions (Betriebskonzept)
 
 - **Batch, not streaming.** Daily-temperature markets move slowly and resolve
