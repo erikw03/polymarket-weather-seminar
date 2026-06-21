@@ -128,9 +128,12 @@ per city), not thousands of tiny snapshots:
 - **Batch, not streaming.** Daily-temperature markets move slowly and resolve
   once per day; periodic polling (e.g. hourly via cron) captures the price path
   with negligible load. No streaming infrastructure is justified.
-- **Append-only immutable raw zone.** Every run writes a new timestamped file and
-  never mutates old ones. This makes the pipeline idempotent and safe to re-run,
-  and gives a full audit trail of exactly what each API returned and when.
+- **Append-only raw zone, partitioned by day (NDJSON).** Each run appends one
+  JSON line per snapshot to a per-day file (`weather_<date>.ndjson`,
+  `polymarket_<date>.ndjson`) instead of writing hundreds of tiny files. Still
+  append-only (we only add lines), so the audit trail and idempotency hold, but
+  the repo stays tidy and git stores appended lines efficiently. See
+  `src/raw_store.py`.
 - **Store raw, clean later.** Responses are stored verbatim (wrapped in a tiny
   `_meta` envelope recording what/when). Cleaning, joining and quality checks are
   deliberately deferred to a separate later stage.

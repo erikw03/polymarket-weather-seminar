@@ -5,9 +5,10 @@ Pulls two things per city:
   1. Daily *forecast* (temperature_2m_max / _min) from the forecast endpoint.
   2. Recent observed *actuals* from the ERA5 archive endpoint.
 
-Each is written verbatim to the append-only raw zone as a timestamped JSON file.
-We do NOT clean or reshape here — that's a separate, later step. The raw zone
-must stay immutable so we can always reproduce/audit what the API returned.
+Each is appended verbatim as one line to a per-day NDJSON partition in the raw
+zone (see src/raw_store.py). We do NOT clean or reshape here — that's a separate,
+later step. The raw zone stays append-only so we can always reproduce/audit what
+the API returned.
 
 Data source: Open-Meteo (https://open-meteo.com/), licensed CC BY 4.0.
 """
@@ -20,26 +21,18 @@ import logging
 import pathlib
 
 import config
-from src import http_client
+from src import http_client, raw_store
 
 logger = logging.getLogger(__name__)
 
 
-def _utc_stamp() -> str:
-    """Filesystem-safe UTC timestamp, e.g. 2026-06-16T08-45-09Z."""
-    return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
-
-
 def _write_raw(directory: pathlib.Path, prefix: str, city: config.City, payload: dict) -> pathlib.Path:
-    """Write `payload` to a new timestamped file. Never overwrites (append-only).
+    """Append one weather snapshot as a line to today's NDJSON partition.
 
     We wrap the raw API response in a tiny envelope recording *what* we fetched
-    and *when*, but the API body itself (`response`) is stored exactly as
-    received.
+    and *when*; the API body itself (`response`) is stored exactly as received.
+    Forecast and archive records share one daily file, told apart by `_meta.kind`.
     """
-    directory.mkdir(parents=True, exist_ok=True)
-    safe_city = city.name.lower().replace(" ", "-")
-    path = directory / f"{prefix}_{safe_city}_{_utc_stamp()}.json"
     envelope = {
         "_meta": {
             "source": "open-meteo",
@@ -53,8 +46,7 @@ def _write_raw(directory: pathlib.Path, prefix: str, city: config.City, payload:
         },
         "response": payload,  # raw, unmodified API body
     }
-    path.write_text(json.dumps(envelope, ensure_ascii=False, indent=2))
-    return path
+    return raw_store.append_record(directory, "weather", envelope)
 
 
 def fetch_forecast(city: config.City) -> dict:

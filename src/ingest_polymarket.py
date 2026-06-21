@@ -29,13 +29,9 @@ import logging
 import pathlib
 
 import config
-from src import http_client
+from src import http_client, raw_store
 
 logger = logging.getLogger(__name__)
-
-
-def _utc_stamp() -> str:
-    return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
 
 
 def discover_events(city: config.City) -> list[dict]:
@@ -127,10 +123,11 @@ def fetch_clob_quote(token_id: str) -> dict:
 
 
 def _write_raw(city: config.City, events: list[dict], clob_quotes: dict) -> pathlib.Path:
-    """Write one append-only, timestamped snapshot for the city."""
-    config.RAW_POLYMARKET_DIR.mkdir(parents=True, exist_ok=True)
-    safe_city = city.name.lower().replace(" ", "-")
-    path = config.RAW_POLYMARKET_DIR / f"polymarket_{safe_city}_{_utc_stamp()}.json"
+    """Append one city snapshot as a line to today's NDJSON partition.
+
+    One line per city per run; all cities share the day's `polymarket_<date>.ndjson`.
+    The raw Gamma/CLOB bodies are stored verbatim inside the envelope.
+    """
     envelope = {
         "_meta": {
             "source": "polymarket",
@@ -144,8 +141,7 @@ def _write_raw(city: config.City, events: list[dict], clob_quotes: dict) -> path
         "gamma_events": events,        # raw event objects, verbatim
         "clob_quotes": clob_quotes,    # keyed by token_id, raw CLOB bodies
     }
-    path.write_text(json.dumps(envelope, ensure_ascii=False, indent=2))
-    return path
+    return raw_store.append_record(config.RAW_POLYMARKET_DIR, "polymarket", envelope)
 
 
 def ingest_city(city: config.City) -> pathlib.Path | None:

@@ -14,7 +14,10 @@ name: hourly-ingestion
 
 on:
   schedule:
-    - cron: "0 * * * *"      # top of every hour, UTC
+    # Run at :17 past every hour (UTC). NOT :00 — the top of the hour is the most
+    # congested slot on GitHub's shared scheduler, so runs there get delayed or
+    # skipped. An off-peak minute is far more reliable for hourly collection.
+    - cron: "17 * * * *"
   workflow_dispatch: {}       # allow manual "Run workflow" from the Actions tab
 
 # Allow the job to push commits back to the repo.
