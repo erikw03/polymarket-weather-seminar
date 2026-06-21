@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "source": "open-meteo",
+    "kind": "weather-forecast",
+    "city": "Munich",
+    "latitude": 48.3538,
+    "longitude": 11.7861,
+    "temperature_unit": "celsius",
+    "station": "Munich Airport",
+    "fetched_at_utc": "2026-06-21T09:41:59.400632+00:00"
+  },
+  "response": {
+    "latitude": 48.36,
+    "longitude": 11.779999,
+    "generationtime_ms": 0.05817413330078125,
+    "utc_offset_seconds": 7200,
+    "timezone": "Europe/Berlin",
+    "timezone_abbreviation": "GMT+2",
+    "elevation": 453.0,
+    "daily_units": {
+      "time": "iso8601",
+      "temperature_2m_max": "°C",
+      "temperature_2m_min": "°C"
+    },
+    "daily": {
+      "time": [
+        "2026-06-21",
+        "2026-06-22",
+        "2026-06-23"
+      ],
+      "temperature_2m_max": [
+        32.8,
+        33.0,
+        31.9
+      ],
+      "temperature_2m_min": [
+        16.1,
+        16.4,
+        17.4
+      ]
+    }
+  }
+}
