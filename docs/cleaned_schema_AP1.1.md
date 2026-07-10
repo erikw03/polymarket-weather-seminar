@@ -1,8 +1,10 @@
 # Cleaned-Schema (Silver) — AP 1.1
 
-> **STATUS: 🔶 VORSCHLAG (Phase B) — noch nicht freigegeben.**
-> Entscheidungsvorlage D1–D6; Finalisierung erst nach Freigabe an STOPP 2.
+> **STATUS: ✅ FREIGEGEBEN (STOPP 2, 2026-07-10) — D1–D6 wie empfohlen.**
+> Offene Punkte entschieden: D2-Cut = einzig „D-1 23:59 lokal" (v1) · Rundung half-up ·
+> voller Spaltenumfang inkl. `clob_mid`/`event_*` · Parquet-Partition nach `city`.
 > Grundlage: `docs/raw_inspection_report_AP1.1.md` (Phase A, Korpus-Stand 2026-07-10).
+> Umsetzung des Transforms: **AP 1.2** (nicht Teil dieses AP).
 
 ## Zweck
 
@@ -214,9 +216,68 @@ Typen = DuckDB. „nativ" = Einheit der Stadt (°C bzw. °F für NYC).
 
 ---
 
-## Offene Punkte für STOPP 2
+## Data-Lineage: Silver-Spalte → Raw-Herkunft → Transformationsregel
 
-1. D2: Ist „D-1 23:59 lokal" als *einziger* v1-Cut ok (statt zusätzlich z. B. „D-1 12:00Z")?
-2. D3: Rundung half-up akzeptiert? (Alternative: floor — Wunderground-Konvention unklar.)
-3. D5: Spaltenumfang ok oder kürzen (z. B. `clob_mid`, `event_*` weglassen)?
-4. Zusatz: Parquet-Partitionierung nach `city` ok?
+Raw-Quellen: **[W]** `data/raw/weather/weather_<D>.ndjson` · **[P]** `data/raw/polymarket/polymarket_<D>.ndjson` · **[B]** `data/backfill/*.json` (ab AP 1.3).
+Notation: `ev` = Element aus `gamma_events[]`, `mk` = Element aus `ev.markets[]`.
+
+| Silver-Spalte | Raw-Herkunft | Transformationsregel |
+|---|---|---|
+| `city` | [P] `_meta.city` / [W] `_meta.city` | 1:1 (Kanon: Markt-Schreibweise, z. B. „NYC") |
+| `target_date` | [P] `ev.eventDate` | 1:1 (Fallback `ev.endDate[:10]`; NICHT aus Abrufzeit ableiten) |
+| `bucket_label` | [P] `mk.groupItemTitle` | 1:1 |
+| `bucket_kind/…_low/…_high_native` | [P] `mk.groupItemTitle` | Regex-Parser, 4 Muster: `N°X` · `N-M°X` · `N°X or below` · `N°X or higher`; offener Rand → NULL |
+| `bucket_unit` | [P] `mk.groupItemTitle` | „°F" im Label → `F`, sonst `C` |
+| `bucket_mid_c` | abgeleitet | Mitte aus low/high (Rand: der endliche Wert); °F→°C: (x−32)·5/9 |
+| `yes_price_raw` | [P] `mk.outcomePrices` | **doppelt** JSON-dekodieren → Element [0] → FLOAT; Snapshot = D2-Cut |
+| `overround_sum` | [P] alle `mk.outcomePrices` des Events | Summe der Yes-Preise desselben Event-Snapshots |
+| `yes_price_norm` | abgeleitet | `yes_price_raw / overround_sum` |
+| `clob_mid` | [P] `clob_quotes[token].midpoint.mid` | Token = `json.loads(mk.clobTokenIds)[0]`; STRING→FLOAT; fehlend → NULL |
+| `bucket_volume` / `bucket_liquidity` | [P] `mk.volumeNum` / `mk.liquidityNum` | numerische Varianten bevorzugen (String-Felder meiden) |
+| `event_volume` / `event_liquidity` | [P] `ev.volume` / `ev.liquidity` | FLOAT-Cast; fehlend (0,5 %) → NULL |
+| `n_snapshots_pre_asof` | [P] Zeilen je (city, eventDate) | COUNT über alle Snapshots mit `fetched_at_utc` < Cut |
+| `hours_to_event_end` | [P] `ev.endDate` − `market_asof_ts` | Differenz in Stunden (Erwartung ≥ ~12 h, sonst QS-Alarm) |
+| `market_asof_ts` | [P] `_meta.fetched_at_utc` | max(fetched_at) mit fetched_at < 00:00 Lokalzeit(target_date, city-TZ) |
+| `forecast_asof_ts` | [W] `_meta.fetched_at_utc` | analog, `kind=weather-forecast` |
+| `forecast_max/min_native` | [W] `response.daily.*[i]` | Index i mit `daily.time[i] == target_date`; Snapshot = D2-Cut |
+| `forecast_max/min_c` | abgeleitet | °F→°C nur für NYC (`temperature_unit`) |
+| `observed_max_native` | [W] `kind=weather-archive`, `response.daily.temperature_2m_max[i]` | `time[i]==target_date`; über ALLE späteren Dateien; **jüngster `fetched_at_utc` gewinnt**; nur Stations-Koordinaten (11 Alt-Records ausgeschlossen) |
+| `observed_max_int_native` | abgeleitet | kaufmännische Rundung (half-up) auf ganze Grad, nativ |
+| `label_in_bucket` | abgeleitet | `bucket_low ≤ observed_max_int ≤ bucket_high` (offene Ränder einseitig); genau 1 Bucket je Zieltag = true |
+| `observed_lag_days` | [W] Dateiname vs. `target_date` | erster Dateitag mit Ist-Wert − Zieltag |
+| `market_resolved_bucket` | [B] `markets[].resolved_bucket` (später: Resolution-Fetcher) | 1:1 wo vorhanden; sonst NULL |
+| `labels_agree` | abgeleitet | Vergleich der beiden Label-Quellen; NULL wenn eine fehlt |
+| `event_id`/`event_slug`/`market_id` | [P] `ev.id`/`ev.slug`/`mk.id` | 1:1 |
+| `clob_token_yes` | [P] `mk.clobTokenIds` | doppelt dekodieren → [0] |
+| `station` | [W] `_meta.station` | 1:1 (Fallback aus City-Konfig für Alt-Records) |
+| `resolution_source_url` | [P] `ev.resolutionSource` | 1:1 |
+| `temperature_unit` | [W] `_meta.temperature_unit` | 1:1 (Fallback City-Konfig) |
+| `source` | Dateipfad | `data/raw/…` → `live`; `data/backfill/…` → `backfill` |
+| `asof_policy` | konstant | `D-1_2359_local` |
+| `flag_overround_outlier` | abgeleitet | \|`overround_sum` − 1\| > 0,10 |
+| `flag_partial_day` | Dateiebene | as-of-Datum ∈ {2026-06-16, 2026-06-20} ∪ Lückenränder ∪ letzter (unvollständiger) Sammeltag |
+| `transform_version`/`created_at` | Transform-Lauf | Git-Hash bzw. Lauf-Zeitstempel |
+
+Bewusst **nicht** übernommen (Begründung): Bild-/UI-Felder (`image`, `icon`, `series`, `tags`), Gebühren-/Reward-Felder, `eventMetadata.context_description` (Polymarket-eigener Prognosetext — für ein Sprachfeature interessant, aber out-of-scope), `bestBid/bestAsk/spread` (durch `clob_mid` abgedeckt), `oneDay/oneHourPriceChange` (aus eigener Zeitreihe rekonstruierbar). Raw behält alles.
+
+---
+
+## Bereit für AP 1.2 — Übergabe
+
+Der Transform (AP 1.2) muss umsetzen, in dieser Reihenfolge:
+
+1. **Dedup/As-of-Auswahl (D2):** je `(city, target_date)` und Quelle den letzten Snapshot vor
+   00:00 Lokalzeit des Zieltags wählen (City-TZ: Europe/London, Europe/Berlin, America/New_York,
+   Asia/Tokyo). Alle späteren Snapshots für Features ignorieren.
+2. **Parsing:** `outcomePrices`/`clobTokenIds` doppelt JSON-dekodieren; String-Zahlen casten;
+   Bucket-Label-Parser mit den 4 Mustern (inkl. NYC-2°F-Bändern).
+3. **Cross-File-Ground-Truth-Join (D3):** Archive-Werte über alle späteren Dateien sammeln,
+   jüngster Abruf gewinnt, nur Stations-Koordinaten; half-up-Rundung; Bucket-Zuordnung nativ-ganzzahlig.
+4. **QS-Flags:** Overround-Ausreißer (>0,10), Teiltage, `hours_to_event_end`-Plausibilität.
+5. **Schreiben:** idempotenter Full-Rebuild → `data/processed/silver.duckdb` (Tabelle
+   `market_bucket_daily`) + Parquet-Export partitioniert nach `city`. Raw bleibt unberührt.
+6. **📌 Ingestion-Erweiterung (aus D4):** Resolution-Fetcher — am Folgetag `GET /events?slug=`
+   für Vortages-Events, Antwort append-only nach `data/raw/polymarket/resolutions_<D>.ndjson`.
+   Füllt `market_resolved_bucket`/`labels_agree` vorwärts.
+
+Erwartete Ausgabegröße v1 (nur live): ~950 Zeilen; mit AP 1.3-Backfill ~5 600 Zeilen.
