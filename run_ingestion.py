@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 import sys
 
-from src import http_client, ingest_polymarket, ingest_weather
+from src import http_client, ingest_polymarket, ingest_resolutions, ingest_weather
 
 logging.basicConfig(
     level=logging.INFO,
@@ -40,6 +40,13 @@ def main() -> int:
         market_files = ingest_polymarket.run()
     except Exception:
         logger.exception("Polymarket source crashed (weather already done).")
+
+    # Third source (AP 1.2): capture official market resolutions for recent past
+    # days. Idempotent (skips already-captured events), so running hourly is cheap.
+    try:
+        ingest_resolutions.run()
+    except Exception:
+        logger.exception("Resolution fetcher crashed (snapshots already done).")
 
     http_client.close()
 

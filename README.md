@@ -143,7 +143,25 @@ per city), not thousands of tiny snapshots:
 - **Externalised config.** Cities and tunables live in `config.py` / `.env`, so
   scaling from "Munich only" to many cities needs no code change.
 
-## Transformation layer (raw → DuckDB)
+## Silver layer (AP 1.2): raw → cleaned table
+
+`build_silver.py` implements the approved schema `docs/cleaned_schema_AP1.1.md`
+(grain: city × target_date × bucket; leakage-safe day-ahead as-of cut; Open-Meteo
+label + official market resolution). Idempotent full rebuild:
+
+```bash
+python build_silver.py   # -> data/processed/silver.duckdb (market_bucket_daily)
+                         #    + parquet partitioned by city under data/processed/silver/
+```
+
+The ingestion also captures a third raw source since AP 1.2: official market
+resolutions (`data/raw/polymarket/resolutions_YYYY-MM-DD.ndjson`, append-only,
+fetched once per resolved event via `/events?slug=`).
+
+## Transformation layer (raw → DuckDB) — DEPRECATED prototype
+
+> `build_processed.py` was a June exploration prototype and is superseded by
+> `build_silver.py` (schema-governed, leakage-safe). Kept for history only.
 
 `build_processed.py` turns the raw zone (live NDJSON + historical backfill) into
 clean, typed, analysis-ready tables in `data/processed/temperature_markets.duckdb`.
