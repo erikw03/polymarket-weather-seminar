@@ -4,6 +4,24 @@
 
 ---
 
+## ⚡ PLAN-ANPASSUNG (Stand So, 13.07.) — Projekt läuft ~5 Tage VOR Plan
+
+**Ist-Stand:** Woche 1 komplett (AP 1.1–1.4 ✅) UND Woche 2 fast komplett (AP 2.1–2.3 ✅)
+bereits am 13.07. erledigt. Offen aus Woche 2: nur AP 2.4 (Konsolidierung, leicht).
+
+**Angepasste Termine (Meilensteine bleiben, Puffer wächst):**
+- AP 2.4 → Mo/Di 14.–15.07. (statt 19./20.07.)
+- Woche 3 (Features & Modell-Gerüst, AP 3.1–3.4) → start ~Di 15.07. (statt 22.07.)
+- Woche 4 (Modell 2 + Schreibbeginn) → ~ab 22.07. → **Schreibstart ~1 Woche früher**
+  (adressiert Risiko #1 „Schreiben" direkt)
+- **Data Freeze bleibt 03.08.** (jeder zusätzliche Sammeltag vergrößert den Korpus;
+  finale Modell-Läufe wie geplant auf Freeze-Daten)
+- Gewonnene Zeit = zusätzlicher Puffer vor Rohfassung (10.08.) und Abgabe (16.08.)
+
+---
+
+---
+
 ## Eckdaten & Regeln
 
 - **Umfang Arbeit:** ca. 2.000 Wörter netto (~7–9 Seiten) + Code als **Anhang** (zählt nicht mit)
