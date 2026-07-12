@@ -20,3 +20,7 @@ data/processed/*
 
 # Local Claude Code state
 .claude/
+
+# OS/Editor-Artefakte
+.DS_Store
+*.Rhistory
