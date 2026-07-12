@@ -5,6 +5,14 @@
 > voller Spaltenumfang inkl. `clob_mid`/`event_*` · Parquet-Partition nach `city`.
 > Grundlage: `docs/raw_inspection_report_AP1.1.md` (Phase A, Korpus-Stand 2026-07-10).
 > Umsetzung des Transforms: **AP 1.2** (nicht Teil dieses AP).
+>
+> **🔄 D3-REVISION (AP 1.2, freigegeben 2026-07-12):** Die in D3 vorgesehene Quantifizierung
+> ergab nur 23 % exakte Bucket-Übereinstimmung zwischen Open-Meteo-Label und offiziellem
+> Markt-Ergebnis (München-Bias +2 °C; Details `DECISIONS_AP1.2.md`). Da der Resolution-Fetcher
+> (AP 1.2) das offizielle Ergebnis inzwischen flächendeckend liefert, gilt:
+> **Primäres Label = `label_is_winner_official`** (Bucket = offizielles Gewinner-Bucket aus
+> `resolutions_*.ndjson`); das Open-Meteo-Label (`label_in_bucket`) bleibt als dokumentierte
+> Sekundär-/Vergleichsspalte (Mismatch = quantifizierte Limitation).
 
 ## Zweck
 
@@ -156,7 +164,8 @@ Typen = DuckDB. „nativ" = Einheit der Stadt (°C bzw. °F für NYC).
 | `observed_max_native` | DOUBLE | ja | Ist-Tagesmax (Archive, jüngster Abruf, nur Stations-Koordinaten); NULL solange Zukunft |
 | `observed_max_c` | DOUBLE | ja | dito °C |
 | `observed_max_int_native` | INTEGER | ja | auf ganze Grad gerundet (half-up, nativ) — Basis der Bucket-Zuordnung |
-| `label_in_bucket` | BOOLEAN | ja | **das Label:** gerundeter Ist-Wert liegt in diesem Bucket |
+| `label_is_winner_official` | BOOLEAN | ja | **das primäre Label (D3-Revision):** Bucket = offizielles Gewinner-Bucket der Markt-Resolution; NULL solange unaufgelöst |
+| `label_in_bucket` | BOOLEAN | ja | Sekundär-Label: gerundeter Open-Meteo-Ist-Wert liegt in diesem Bucket |
 | `label_source` | TEXT | nein | konstant `open_meteo_archive_latest` (Lineage/Erweiterbarkeit) |
 | `observed_lag_days` | INTEGER | ja | Tage bis erster Ist-Wert verfügbar war (Freshness-Doku) |
 | `market_resolved_bucket` | TEXT | ja | markt-offizielles Gewinner-Bucket, wo bekannt (Backfill/Resolution-Fetcher) |
@@ -245,7 +254,8 @@ Notation: `ev` = Element aus `gamma_events[]`, `mk` = Element aus `ev.markets[]`
 | `observed_max_int_native` | abgeleitet | kaufmännische Rundung (half-up) auf ganze Grad, nativ |
 | `label_in_bucket` | abgeleitet | `bucket_low ≤ observed_max_int ≤ bucket_high` (offene Ränder einseitig); genau 1 Bucket je Zieltag = true |
 | `observed_lag_days` | [W] Dateiname vs. `target_date` | erster Dateitag mit Ist-Wert − Zieltag |
-| `market_resolved_bucket` | [B] `markets[].resolved_bucket` (später: Resolution-Fetcher) | 1:1 wo vorhanden; sonst NULL |
+| `market_resolved_bucket` | [P] `resolutions_*.ndjson` → `event.markets[]` mit `outcomePrices[0] ≥ 0,99` → `groupItemTitle` (Fallback [B] `resolved_bucket`) | Gewinner-Bucket des aufgelösten Events |
+| `label_is_winner_official` | abgeleitet | `bucket_label == market_resolved_bucket`; NULL wenn Resolution fehlt |
 | `labels_agree` | abgeleitet | Vergleich der beiden Label-Quellen; NULL wenn eine fehlt |
 | `event_id`/`event_slug`/`market_id` | [P] `ev.id`/`ev.slug`/`mk.id` | 1:1 |
 | `clob_token_yes` | [P] `mk.clobTokenIds` | doppelt dekodieren → [0] |

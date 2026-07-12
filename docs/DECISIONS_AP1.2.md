@@ -69,7 +69,23 @@ offizielles Markt-Ergebnis (jetzt via Resolution-Fetcher zu ~100 % verfügbar, v
 selbsttragend) als **primäres** Label; Open-Meteo-Ist bleibt Feature/Zusatzspalte.
 Bis zur Freigabe bleibt der Transform wie freigegeben (D3 unverändert).
 
+## ✅ D3-Revision — freigegeben (2026-07-12, „Freigabe für alle 3 (a bis c)")
+
+- (a) **umgesetzt:** neue Spalte `label_is_winner_official` = primäres Label
+  (Bucket = offizielles Gewinner-Bucket); QS-Check „genau 1 offizieller Gewinner je
+  aufgelöstem Tag" ergänzt; `label_source` dokumentiert beide Quellen.
+- (b) Open-Meteo-Label (`label_in_bucket`) bleibt als Sekundär-/Vergleichsspalte —
+  der Mismatch (23 % exakt, München +2 °C) ist quantifizierte Limitation fürs
+  Datenqualitäts-Kapitel der Arbeit.
+- (c) Detail-Zahlen vorgelegt (Tag-für-Tag-Vergleich + Verteilung; siehe Chat/
+  Skript-Queries): London 5/20, München 1/20, NYC 6/20, Tokio 7/19 exakt;
+  Versatz mean: LON −0,3 / MUC +2,0 / NYC +0,3 / TYO +0,5 (nativ).
+- Schema-Doc entsprechend revidiert (Status-Block + D5-Tabelle + Lineage).
+- Zweiter Transform-Lauf nach `git pull` (Korpus 12.07.): **1 001 Zeilen, 91 Zieltage,
+  88 offizielle Gewinner, alle QS-Checks grün.** Nebenbefund: der Resolution-Fetcher
+  lief bereits autonom in der Cloud (resolutions_2026-07-12.ndjson ohne manuelles Zutun).
+
 ## Offene Punkte
 
-- ❓ D3-Revision (siehe Befund) — wartet auf Entscheidung.
 - 📌 AP 1.3: Backfill-Bestand (`source='backfill'`) einspielen; Forecast-Lücke 17.–19.06. prüfen.
+- 🔍 AP 2.x: `official_known`-Quote als Freshness-Check (Resolutions hängen ~1–2 Tage nach — normal).

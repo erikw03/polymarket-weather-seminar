@@ -293,8 +293,12 @@ def build_rows() -> pd.DataFrame:
                 "observed_max_native": ob[1] if ob else None,
                 "observed_max_c": to_c(ob[1], unit) if ob else None,
                 "observed_max_int_native": obs_int,
+                # D3-Revision (freigegeben 2026-07-11): PRIMARY label = official market
+                # resolution (Wunderground outcome via resolutions_*.ndjson). The
+                # Open-Meteo label stays as documented secondary (label_in_bucket).
+                "label_is_winner_official": (mk["groupItemTitle"] == winner) if winner else None,
                 "label_in_bucket": in_bucket(obs_int, b) if obs_int is not None else None,
-                "label_source": "open_meteo_archive_latest",
+                "label_source": "market_resolution_official; aux=open_meteo_archive_latest",
                 "observed_lag_days": ob[2] if ob else None,
                 "market_resolved_bucket": winner,
                 "labels_agree": (winner == om_label) if winner and om_label else None,
@@ -330,13 +334,19 @@ def main() -> None:
         SELECT COUNT(*) FROM (SELECT city, target_date, bucket_label
                               FROM market_bucket_daily
                               GROUP BY 1,2,3 HAVING COUNT(*) > 1)""").fetchone()[0]
-    # exactly one winning bucket per labelled day
+    # exactly one winning bucket per labelled day (both label sources)
     bad_label = con.execute("""
         SELECT COUNT(*) FROM (SELECT city, target_date
                               FROM market_bucket_daily
                               WHERE observed_max_int_native IS NOT NULL
                               GROUP BY 1,2
                               HAVING SUM(CASE WHEN label_in_bucket THEN 1 ELSE 0 END) <> 1)""").fetchone()[0]
+    bad_official = con.execute("""
+        SELECT COUNT(*) FROM (SELECT city, target_date
+                              FROM market_bucket_daily
+                              WHERE market_resolved_bucket IS NOT NULL
+                              GROUP BY 1,2
+                              HAVING SUM(CASE WHEN label_is_winner_official THEN 1 ELSE 0 END) <> 1)""").fetchone()[0]
     # leakage audit: as-of must be well before event end (>= ~12h)
     min_lead = con.execute("SELECT MIN(hours_to_event_end) FROM market_bucket_daily").fetchone()[0]
     # normalized probabilities sum to 1 per event
@@ -350,9 +360,10 @@ def main() -> None:
         (FORMAT PARQUET, PARTITION_BY (city), OVERWRITE_OR_IGNORE)""")
     con.close()
 
-    logger.info("QS: pk_duplicates=%d | bad_label_days=%d | min_hours_to_end=%.1f | max_norm_error=%.2e",
-                dupes, bad_label, min_lead, norm_err)
-    if dupes or bad_label:
+    logger.info("QS: pk_duplicates=%d | bad_label_days=%d | bad_official_days=%d | "
+                "min_hours_to_end=%.1f | max_norm_error=%.2e",
+                dupes, bad_label, bad_official, min_lead, norm_err)
+    if dupes or bad_label or bad_official:
         raise SystemExit("QS check failed - see log")
     logger.info("wrote %s (table market_bucket_daily) + parquet under %s", DB_PATH, PARQUET_DIR)
 
