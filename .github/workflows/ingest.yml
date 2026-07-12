@@ -62,3 +62,12 @@ jobs:
             git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
+
+      # Quality gate (AP 2.3): runs AFTER the data commit on purpose - a red gate
+      # must not block persisting valid raw data; it makes quality problems visible
+      # (red run + GitHub notification = P1 path of docs/alerting_konzept.md).
+      - name: Build silver (fresh, for the gate)
+        run: python build_silver.py
+
+      - name: Quality gate (18 checks, exit 1 on FAIL)
+        run: python quality_checks.py

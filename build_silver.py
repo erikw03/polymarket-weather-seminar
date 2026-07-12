@@ -43,6 +43,25 @@ ASOF_POLICY = "D-1_2359_local"
 CITY = {c.name: c for c in config.CITIES}
 TZ = {c.name: ZoneInfo(c.timezone) for c in config.CITIES}
 
+# Corrupt-line tolerance (AP 2.3/U3): a single bad NDJSON line must not kill the
+# transform, but systematic corruption must. Counters are checked in main().
+CORRUPT_MAX_RATE = 0.005
+_lines_total = 0
+_lines_corrupt = 0
+
+
+def iter_ndjson(path: str):
+    """Yield parsed records; skip and count corrupt lines instead of crashing."""
+    global _lines_total, _lines_corrupt
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            _lines_total += 1
+            try:
+                yield json.loads(line)
+            except json.JSONDecodeError:
+                _lines_corrupt += 1
+                logger.warning("corrupt NDJSON line skipped in %s", path.rsplit("/", 1)[-1])
+
 
 # ---------------------------------------------------------------- helpers
 def parse_ts(iso: str) -> dt.datetime:
@@ -111,27 +130,25 @@ def load_market_asof() -> tuple[dict, dict, set]:
     for f in files:
         fday = f.rsplit("_", 1)[1].removesuffix(".ndjson")
         n_lines = 0
-        with open(f, encoding="utf-8") as fh:
-            for line in fh:
-                n_lines += 1
-                rec = json.loads(line)
-                city = rec["_meta"]["city"]
-                ts = parse_ts(rec["_meta"]["fetched_at_utc"])
-                for ev in rec.get("gamma_events", []):
-                    td_s = ev.get("eventDate") or ev.get("endDate", "")[:10]
-                    try:
-                        td = dt.date.fromisoformat(td_s)
-                    except ValueError:
-                        continue
-                    cut = cutoff(city, td)
-                    if ts >= cut:
-                        continue  # post-cut snapshot: never a feature (leakage rule)
-                    if cut > now:
-                        continue  # target day not started yet: as-of not final (U8) -> skip
-                    key = (city, td)
-                    n_pre[key] += 1
-                    if key not in best or ts > best[key][0]:
-                        best[key] = (ts, ev, rec.get("clob_quotes", {}))
+        for rec in iter_ndjson(f):
+            n_lines += 1
+            city = rec["_meta"]["city"]
+            ts = parse_ts(rec["_meta"]["fetched_at_utc"])
+            for ev in rec.get("gamma_events", []):
+                td_s = ev.get("eventDate") or ev.get("endDate", "")[:10]
+                try:
+                    td = dt.date.fromisoformat(td_s)
+                except ValueError:
+                    continue
+                cut = cutoff(city, td)
+                if ts >= cut:
+                    continue  # post-cut snapshot: never a feature (leakage rule)
+                if cut > now:
+                    continue  # target day not started yet: as-of not final (U8) -> skip
+                key = (city, td)
+                n_pre[key] += 1
+                if key not in best or ts > best[key][0]:
+                    best[key] = (ts, ev, rec.get("clob_quotes", {}))
         line_counts[fday] = n_lines
     med = sorted(line_counts.values())[len(line_counts) // 2]
     partial = {d for d, n in line_counts.items() if n < 0.5 * med}
@@ -157,33 +174,31 @@ def load_weather() -> tuple[dict, dict]:
     now = dt.datetime.now(dt.timezone.utc)
     for f in files:
         fday = dt.date.fromisoformat(f.rsplit("_", 1)[1].removesuffix(".ndjson"))
-        with open(f, encoding="utf-8") as fh:
-            for line in fh:
-                rec = json.loads(line)
-                meta = rec["_meta"]
-                city, kind = meta["city"], meta["kind"]
-                if kind not in ("weather-forecast", "weather-archive"):
-                    continue  # F3: ignore the single historical-forecast record
-                ts = parse_ts(meta["fetched_at_utc"])
-                daily = rec["response"]["daily"]
-                for i, t in enumerate(daily["time"]):
-                    td = dt.date.fromisoformat(t)
-                    vmax = daily["temperature_2m_max"][i]
-                    key = (city, td)
-                    if kind == "weather-forecast":
-                        cut = cutoff(city, td)
-                        if ts >= cut or cut > now:
-                            continue
-                        if key not in forecasts or ts > forecasts[key][0]:
-                            forecasts[key] = (ts, vmax, daily["temperature_2m_min"][i])
-                    else:  # weather-archive -> label source
-                        if not meta.get("station") or vmax is None:
-                            continue  # U6 legacy exclusion / missing value
-                        if key not in obs_latest or ts > obs_latest[key][0]:
-                            obs_latest[key] = (ts, vmax)
-                        lag = (fday - td).days
-                        if key not in obs_first_seen or lag < obs_first_seen[key]:
-                            obs_first_seen[key] = lag
+        for rec in iter_ndjson(f):
+            meta = rec["_meta"]
+            city, kind = meta["city"], meta["kind"]
+            if kind not in ("weather-forecast", "weather-archive"):
+                continue  # F3: ignore the single historical-forecast record
+            ts = parse_ts(meta["fetched_at_utc"])
+            daily = rec["response"]["daily"]
+            for i, t in enumerate(daily["time"]):
+                td = dt.date.fromisoformat(t)
+                vmax = daily["temperature_2m_max"][i]
+                key = (city, td)
+                if kind == "weather-forecast":
+                    cut = cutoff(city, td)
+                    if ts >= cut or cut > now:
+                        continue
+                    if key not in forecasts or ts > forecasts[key][0]:
+                        forecasts[key] = (ts, vmax, daily["temperature_2m_min"][i])
+                else:  # weather-archive -> label source
+                    if not meta.get("station") or vmax is None:
+                        continue  # U6 legacy exclusion / missing value
+                    if key not in obs_latest or ts > obs_latest[key][0]:
+                        obs_latest[key] = (ts, vmax)
+                    lag = (fday - td).days
+                    if key not in obs_first_seen or lag < obs_first_seen[key]:
+                        obs_first_seen[key] = lag
     observed = {k: (ts, v, obs_first_seen.get(k)) for k, (ts, v) in obs_latest.items()}
     logger.info("weather pass: %d forecast keys, %d observed keys", len(forecasts), len(observed))
     return forecasts, observed
@@ -194,21 +209,19 @@ def load_resolutions() -> dict:
     """resolutions_*.ndjson -> winner bucket label per (city, target_date)."""
     winners: dict = {}
     for f in sorted(glob.glob(str(config.RAW_POLYMARKET_DIR / "resolutions_*.ndjson"))):
-        with open(f, encoding="utf-8") as fh:
-            for line in fh:
-                rec = json.loads(line)
-                ev = rec.get("event", {})
-                if not ev.get("closed"):
+        for rec in iter_ndjson(f):
+            ev = rec.get("event", {})
+            if not ev.get("closed"):
+                continue
+            city = rec["_meta"]["city"]
+            td = dt.date.fromisoformat(rec["_meta"]["target_date"])
+            for mk in ev.get("markets", []):
+                try:
+                    if float(json.loads(mk["outcomePrices"])[0]) >= 0.99:
+                        winners[(city, td)] = mk["groupItemTitle"]
+                        break
+                except (KeyError, ValueError, json.JSONDecodeError):
                     continue
-                city = rec["_meta"]["city"]
-                td = dt.date.fromisoformat(rec["_meta"]["target_date"])
-                for mk in ev.get("markets", []):
-                    try:
-                        if float(json.loads(mk["outcomePrices"])[0]) >= 0.99:
-                            winners[(city, td)] = mk["groupItemTitle"]
-                            break
-                    except (KeyError, ValueError, json.JSONDecodeError):
-                        continue
     logger.info("resolutions pass: %d official winners", len(winners))
     return winners
 
@@ -441,6 +454,14 @@ def build_rows() -> pd.DataFrame:
 def main() -> None:
     df = build_rows()
     logger.info("assembled %d silver rows", len(df))
+
+    # AP 2.3/U3: single corrupt lines are skipped (logged); systematic corruption aborts.
+    if _lines_total and _lines_corrupt / _lines_total > CORRUPT_MAX_RATE:
+        raise SystemExit(f"QS: {_lines_corrupt}/{_lines_total} korrupte NDJSON-Zeilen "
+                         f"(> {CORRUPT_MAX_RATE:.1%}) - Transform abgebrochen")
+    if _lines_corrupt:
+        logger.warning("QS: %d/%d korrupte Zeilen uebersprungen (unter Schwelle %.1f%%)",
+                       _lines_corrupt, _lines_total, CORRUPT_MAX_RATE * 100)
 
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect(str(DB_PATH))
