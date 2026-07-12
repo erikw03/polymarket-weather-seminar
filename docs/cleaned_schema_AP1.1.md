@@ -179,7 +179,7 @@ Typen = DuckDB. „nativ" = Einheit der Stadt (°C bzw. °F für NYC).
 | `market_asof_ts` / `forecast_asof_ts` | TIMESTAMP | nein/ja | exakte Herkunfts-Snapshots (UTC) |
 | `event_id` / `event_slug` / `market_id` | TEXT | nein | Gamma-IDs (Rück-Join in Raw) |
 | `clob_token_yes` | TEXT | ja | Yes-Token-ID (Rück-Join in `clob_quotes`) |
-| `station` / `resolution_source_url` | TEXT | nein | Auflösungsstation (Wetter-`_meta` / Event) |
+| `station` / `resolution_source_url` | TEXT | nein / ja (backfill) | Auflösungsstation (Wetter-`_meta` / Event); URL fehlt in Backfill-Quelle → NULL (AP 1.3/U6) |
 | `temperature_unit` | TEXT | nein | `celsius` \| `fahrenheit` (nativ) |
 | `flag_overround_outlier` | BOOLEAN | nein | \|`overround_sum`−1\| > 0,10 (frische Listings etc.) |
 | `flag_partial_day` | BOOLEAN | nein | as-of-Tag ist Teiltag/Lückenrand (16./20.06., 10.07.) |

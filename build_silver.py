@@ -213,6 +213,120 @@ def load_resolutions() -> dict:
     return winners
 
 
+# ---------------------------------------------------------------- backfill (AP 1.3)
+def load_backfill_rows(live_keys: set, version: str, created: dt.datetime) -> list[dict]:
+    """Rows with source='backfill' from data/backfill/ (Mar 1 - Jun 20 2026).
+
+    Sources per city:
+      polymarket_<c>_history.json  -> hourly yes-price trajectories + resolved_bucket
+      weather_<c>_prevday1.json    -> lead-consistent forecast (previous_day1 hourly -> daily max/min)
+      weather_<c>_history.json     -> archive_actuals (secondary Open-Meteo label)
+
+    Rules (DECISIONS_AP1.3):
+      - live wins: (city, target_date) already in live silver -> skipped here
+      - per-bucket as-of: last trajectory point before the D2 cut; buckets without a
+        pre-cut point are dropped; if <50% of buckets or the WINNER bucket lack a
+        pre-cut price, the whole day is skipped (incomplete distribution/unlabelable)
+      - overround_sum approximated from per-bucket as-of prices (timestamps differ
+        by minutes across buckets; documented approximation)
+      - not available historically -> NULL: clob_mid, volumes, forecast_asof_ts,
+        event_id, market_id, resolution_source_url, observed_lag_days
+    """
+    bdir = config.PROJECT_ROOT / "data" / "backfill"
+    rows: list[dict] = []
+    skipped_days = 0
+    for c in config.CITIES:
+        cs = c.name.lower().replace(" ", "-")
+        try:
+            hist = json.loads((bdir / f"polymarket_{cs}_history.json").read_text())
+            wx = json.loads((bdir / f"weather_{cs}_history.json").read_text())
+            prev = json.loads((bdir / f"weather_{cs}_prevday1.json").read_text())
+        except FileNotFoundError as e:
+            logger.warning("backfill files missing for %s (%s) - skipped", c.name, e)
+            continue
+        # previous_day1 hourly -> per-date native max/min
+        fc_by_date: dict[str, list[float]] = defaultdict(list)
+        h = prev["response"]["hourly"]
+        for t, v in zip(h["time"], h["temperature_2m_previous_day1"]):
+            if v is not None:
+                fc_by_date[t[:10]].append(v)
+        # archive actuals -> per-date native max
+        aa = wx["archive_actuals"]["daily"]
+        obs_by_date = {t: v for t, v in zip(aa["time"], aa["temperature_2m_max"]) if v is not None}
+
+        for m in hist["markets"]:
+            td = dt.date.fromisoformat(m["date"])
+            if (c.name, td) in live_keys:
+                continue  # live wins on overlap
+            winner = m.get("resolved_bucket")
+            cut = cutoff(c.name, td)
+            end_ts = parse_ts(m["endDate"])
+            # per-bucket as-of selection
+            sel = []  # (bucket_label, parsed, yes, asof_ts, n_pre)
+            for b in m["buckets"]:
+                pb = parse_bucket(b["bucket"])
+                if pb is None:
+                    continue
+                pre = [(t, p) for t, p in ((pt["t"], pt["p"]) for pt in b["history"])
+                       if dt.datetime.fromtimestamp(t, dt.timezone.utc) < cut]
+                if not pre:
+                    continue
+                t_last, p_last = pre[-1]
+                sel.append((b["bucket"], pb, float(p_last),
+                            dt.datetime.fromtimestamp(t_last, dt.timezone.utc), len(pre),
+                            b.get("yes_token")))
+            if not winner or len(sel) < 0.5 * len(m["buckets"]) or winner not in {s[0] for s in sel}:
+                skipped_days += 1
+                continue
+            osum = sum(s[2] for s in sel)
+            if osum == 0:
+                skipped_days += 1
+                continue
+            fcv = fc_by_date.get(m["date"]) or None
+            obs = obs_by_date.get(m["date"])
+            obs_int = half_up(obs) if obs is not None else None
+            om_label = next((lbl for lbl, pb, *_ in sel
+                             if obs_int is not None and in_bucket(obs_int, pb)), None)
+            for lbl, pb, yes, asof_ts, n_pre, token in sel:
+                low, high = pb["low"], pb["high"]
+                mid_native = low if high is None else high if low is None else (low + high) / 2
+                rows.append({
+                    "city": c.name, "target_date": td, "bucket_label": lbl,
+                    "bucket_kind": pb["bucket_kind"], "bucket_unit": pb["bucket_unit"],
+                    "bucket_low_native": low, "bucket_high_native": high,
+                    "bucket_mid_c": to_c(float(mid_native), c.temperature_unit),
+                    "yes_price_raw": yes, "yes_price_norm": yes / osum, "overround_sum": osum,
+                    "clob_mid": None, "bucket_volume": None, "bucket_liquidity": None,
+                    "event_volume": None, "event_liquidity": None,
+                    "n_snapshots_pre_asof": n_pre,
+                    "hours_to_event_end": round((end_ts - asof_ts).total_seconds() / 3600, 2),
+                    "forecast_max_native": max(fcv) if fcv else None,
+                    "forecast_min_native": min(fcv) if fcv else None,
+                    "forecast_max_c": to_c(max(fcv), c.temperature_unit) if fcv else None,
+                    "forecast_min_c": to_c(min(fcv), c.temperature_unit) if fcv else None,
+                    "label_is_winner_official": lbl == winner,
+                    "label_in_bucket": in_bucket(obs_int, pb) if obs_int is not None else None,
+                    "label_source": "market_resolution_official; aux=open_meteo_archive_latest",
+                    "observed_max_native": obs, "observed_max_c": to_c(obs, c.temperature_unit),
+                    "observed_max_int_native": obs_int,
+                    "observed_lag_days": None,
+                    "market_resolved_bucket": winner,
+                    "labels_agree": (winner == om_label) if winner and om_label else None,
+                    "source": "backfill", "asof_policy": ASOF_POLICY,
+                    "market_asof_ts": asof_ts.replace(tzinfo=None), "forecast_asof_ts": None,
+                    "event_id": None, "event_slug": m.get("slug"), "market_id": None,
+                    "clob_token_yes": token,
+                    "station": c.station, "resolution_source_url": None,
+                    "temperature_unit": c.temperature_unit,
+                    "flag_overround_outlier": abs(osum - 1) > OVERROUND_OUTLIER_THRESHOLD,
+                    "flag_partial_day": False,
+                    "transform_version": version, "created_at": created.replace(tzinfo=None),
+                })
+    logger.info("backfill pass: %d rows, %d days skipped (sparse/unlabelable)",
+                len(rows), skipped_days)
+    return rows
+
+
 # ---------------------------------------------------------------- assemble
 def build_rows() -> pd.DataFrame:
     best, n_pre, partial_days = load_market_asof()
@@ -316,6 +430,10 @@ def build_rows() -> pd.DataFrame:
                 "transform_version": version,
                 "created_at": created.replace(tzinfo=None),
             })
+
+    # AP 1.3: extend with historical rows (live wins on overlapping days)
+    live_keys = set(best.keys())
+    rows.extend(load_backfill_rows(live_keys, version, created))
     return pd.DataFrame(rows)
 
 
@@ -334,13 +452,16 @@ def main() -> None:
         SELECT COUNT(*) FROM (SELECT city, target_date, bucket_label
                               FROM market_bucket_daily
                               GROUP BY 1,2,3 HAVING COUNT(*) > 1)""").fetchone()[0]
-    # exactly one winning bucket per labelled day (both label sources)
+    # Open-Meteo label: at most one winning bucket per day; zero is only legal for
+    # backfill days whose Open-Meteo-winning bucket was never traded pre-cut (U4).
     bad_label = con.execute("""
         SELECT COUNT(*) FROM (SELECT city, target_date
                               FROM market_bucket_daily
                               WHERE observed_max_int_native IS NOT NULL
                               GROUP BY 1,2
-                              HAVING SUM(CASE WHEN label_in_bucket THEN 1 ELSE 0 END) <> 1)""").fetchone()[0]
+                              HAVING SUM(CASE WHEN label_in_bucket THEN 1 ELSE 0 END) > 1
+                                  OR (SUM(CASE WHEN label_in_bucket THEN 1 ELSE 0 END) = 0
+                                      AND ANY_VALUE(source) = 'live'))""").fetchone()[0]
     bad_official = con.execute("""
         SELECT COUNT(*) FROM (SELECT city, target_date
                               FROM market_bucket_daily
