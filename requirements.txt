@@ -3,3 +3,4 @@ python-dotenv>=1.0   # load tunables from .env
 tenacity>=8.2        # retry with exponential backoff on transient HTTP errors
 duckdb>=1.1
 pandas>=2.0
+scikit-learn>=1.4  # AP 3.2+: LogReg-Baseline & Metriken (Modelle laut Projektplan vorgegeben)
