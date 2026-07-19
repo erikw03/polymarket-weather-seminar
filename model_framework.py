@@ -31,6 +31,8 @@ import json
 import duckdb
 import numpy as np
 import pandas as pd
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -56,6 +58,14 @@ MODELS = {
     # sensitiv, balanced verschlechtert - siehe docs/DECISIONS_AP3.3.md).
     "logreg": lambda: make_pipeline(StandardScaler(),
                                     LogisticRegression(C=10.0, max_iter=4000)),
+    # AP 4.1: Gradient Boosting (sklearn HistGB = LightGBM-Familie, U1) + isotonische
+    # Kalibrierung (roh ueberkonfident, ECE 0.0181 -> 0.0119). Staerkste Konfiguration
+    # war die kleinste (lr=0.05, 15 Blaetter, 150 Iter.) - mehr Kapazitaet overfittet.
+    "gbm": lambda: CalibratedClassifierCV(
+        HistGradientBoostingClassifier(learning_rate=0.05, max_leaf_nodes=15,
+                                       max_iter=150, early_stopping=False,
+                                       random_state=42),
+        method="isotonic", cv=3),
 }
 
 
