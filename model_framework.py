@@ -52,8 +52,10 @@ EMBARGO_DAYS = 2     # Resolution-Latenz (U3)
 EPS = 1e-6
 
 MODELS = {
-    # Platzhalter (U5); AP 3.3 interpretiert, AP 4.1 ergaenzt Gradient Boosting.
-    "logreg": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)),
+    # AP 3.3: gewaehlte Konfiguration (Gitter auf CV, Kriterium Brier; C kaum
+    # sensitiv, balanced verschlechtert - siehe docs/DECISIONS_AP3.3.md).
+    "logreg": lambda: make_pipeline(StandardScaler(),
+                                    LogisticRegression(C=10.0, max_iter=4000)),
 }
 
 
