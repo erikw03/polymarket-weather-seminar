@@ -56,12 +56,30 @@ jobs:
           git add data/raw
           if git diff --cached --quiet; then
             echo "No new data this run."
-          else
-            git commit -m "data: ingestion snapshot $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
-            # Rebase on any concurrent change, then push.
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            exit 0
           fi
+          git commit -m "data: ingestion snapshot $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
+          # Robust gegen gleichzeitige Laeufe (Schedule + externer Cron):
+          # NDJSON-Anhaenge mergen per .gitattributes (merge=union) konfliktfrei;
+          # Push mit Retry statt frueherem '|| true' (das liess bei einer
+          # Trigger-Kollision Konfliktmarker im Arbeitsbaum stehen, was das
+          # Quality-Gate danach zu Recht rot machte). Bei jedem Fehlschlag wird
+          # ein evtl. haengender Rebase abgebrochen und neu versucht.
+          for attempt in 1 2 3 4 5; do
+            git fetch -q origin "${GITHUB_REF_NAME}"
+            if git rebase "origin/${GITHUB_REF_NAME}"; then
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+                echo "pushed on attempt ${attempt}"
+                exit 0
+              fi
+            else
+              git rebase --abort || true
+            fi
+            echo "push attempt ${attempt} failed (concurrent run?), retrying..."
+            sleep $((RANDOM % 5 + 3))
+          done
+          echo "ERROR: push nach 5 Versuchen fehlgeschlagen"
+          exit 1
 
       # Quality gate (AP 2.3): runs AFTER the data commit on purpose - a red gate
       # must not block persisting valid raw data; it makes quality problems visible

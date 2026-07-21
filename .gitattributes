@@ -1,0 +1,6 @@
+# Roh-NDJSON ist append-only. Wenn zwei Ingestion-Laeufe (GitHub-Schedule +
+# externer Cron) gleichzeitig an dieselbe Tagesdatei anhaengen, entsteht beim
+# Rebase ein Konflikt am Dateiende. merge=union loest das konfliktfrei, indem
+# es die Zeilen BEIDER Seiten behaelt (kein Snapshot geht verloren, keine
+# Konfliktmarker landen im Baum). Siehe AP-Fix vom 2026-07-21.
+*.ndjson merge=union
