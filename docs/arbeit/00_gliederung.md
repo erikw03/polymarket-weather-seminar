@@ -10,7 +10,7 @@ Legende Status: ✍️ geschrieben · ⬜ offen · Wortangaben = verbindliches B
 |---|---|---|---|---|
 | 1 | Einleitung & Use-Case | 200 | ⬜ | 5.3 |
 | 2 | Vorgehen & Architektur | 400 | ✍️ | **4.2** |
-| 3 | Ingestion & Speicherung | 350 | ⬜ | 4.3 |
+| 3 | Ingestion & Speicherung | 350 | ✍️ | **4.3** |
 | 4 | Betriebskonzept: Observability & Fehlertoleranz | 450 | ⬜ | 5.1 |
 | 5 | Analyse: Modelle vs. Markt | 400 | ⬜ | 5.2 |
 | 6 | Fazit & Ausblick | 200 | ⬜ | 5.3 |
@@ -58,7 +58,8 @@ Kernentscheidung As-of-Cut (D-1 23:59 lokal) als Leakage-Schutz kurz anreißen.
 Hadoop/Spark (K4, konzeptionell), Cloud (K6, konzeptionell).
 **Belege:** `docs/lineage.md`, `docs/cleaned_schema_AP1.1.md`, `src/raw_store.py`,
 `.github/workflows/ingest.yml`.
-**Zahlen:** [Z: 718 MB Raw, 104 Tagesdateien, 42 Sammeltage, 28–35 Abrufe/Stadt/Tag].
+**Zahlen:** [Z: 718 MB Raw → 2,3 MB Silver; 3,1 s Full-Rebuild; 33–38 Abrufe/Stadt/Tag].
+**Datei:** `03_ingestion_speicherung.md`
 
 ## 4 — Betriebskonzept: Observability & Fehlertoleranz (450 W, AP 5.1)
 
