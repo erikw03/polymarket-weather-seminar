@@ -41,6 +41,13 @@ NULL_CLOB_LIVE_WARN = 0.10
 NULL_OBSERVED_WARN = 0.05                                    # Tage <= heute-2
 OVERROUND_OUTLIER_RATE_WARN = 0.05                           # gemessen ~0.018
 LEAKAGE_MIN_HOURS_FAIL = 7.9                                 # NYC-Konstruktionsminimum = 8.0
+# X2 trennt harte (strukturelle) von weichen Verstoessen. Weich = einzelne Maerkte
+# ohne outcomePrices/clobTokenIds: bekannter transienter Zustand FRISCH GELISTETER
+# Maerkte (Gamma listet ~D+2 vor, Preise folgen binnen ~1h; gemessen 1 von ~1800
+# Zeilen in 14 Tagen) - build_silver ueberspringt solche Buckets sauber. Erst wenn
+# es viele sind, ist es ein echter API-Ausfall -> dann FAIL. Analog zu
+# CORRUPT_MAX_RATE in build_silver.py (AP 2.3/U3).
+SOFT_VIOLATION_MAX_RATE = 0.05
 
 # Freigegebene Silver-Spalten (docs/cleaned_schema_AP1.1.md, inkl. D3-Revision)
 EXPECTED_SILVER_COLUMNS = {
@@ -161,7 +168,13 @@ def check_schema_raw() -> None:
     report("X1 Raw-Schema weather", "Schema", "OK" if problems == 0 else "FAIL",
            f"{problems}/{n} Verstoesse", "0 erlaubt", os.path.basename(f or ""))
 
-    problems = 0
+    # X2 trennt nach Schweregrad (Fix 2026-07-30, siehe docs/incident_2026-07-30_gate-fail.md):
+    #   hart  = strukturelle Defekte (kaputtes JSON, fehlende Top-Level-Keys, Event ohne
+    #           Datum) -> deuten auf Pipeline-/Merge-Probleme, bleiben FAIL
+    #   weich = einzelne Maerkte ohne/mit unparsebarem outcomePrices bzw. clobTokenIds
+    #           oder leerem groupItemTitle -> bekannter transienter API-Zustand frisch
+    #           gelisteter Maerkte, vom Transform sauber uebersprungen -> WARN
+    hard, soft = 0, 0
     f = newest(str(config.RAW_POLYMARKET_DIR / "polymarket_*.ndjson"))
     n = 0
     cities = set()
@@ -172,17 +185,32 @@ def check_schema_raw() -> None:
                 rec = json.loads(line)
                 assert {"_meta", "gamma_events", "clob_quotes"} <= set(rec)
                 cities.add(rec["_meta"]["city"])
-                for ev in rec["gamma_events"]:
-                    assert ev.get("eventDate") or ev.get("endDate")
-                    for mk in ev["markets"]:
+            except (AssertionError, KeyError, json.JSONDecodeError):
+                hard += 1
+                continue
+            line_soft = False
+            for ev in rec["gamma_events"]:
+                if not (ev.get("eventDate") or ev.get("endDate")):
+                    hard += 1
+                    continue
+                for mk in ev.get("markets", []):
+                    try:
                         json.loads(mk["outcomePrices"])   # Doppel-Dekodier-Probe
                         json.loads(mk["clobTokenIds"])
                         assert mk.get("groupItemTitle")
-            except (AssertionError, KeyError, json.JSONDecodeError):
-                problems += 1
-    status = "FAIL" if problems else ("WARN" if cities != {c.name for c in config.CITIES} else "OK")
+                    except (AssertionError, KeyError, json.JSONDecodeError):
+                        line_soft = True
+            soft += int(line_soft)
+    soft_rate = soft / n if n else 0.0
+    if hard or soft_rate > SOFT_VIOLATION_MAX_RATE:
+        status = "FAIL"           # struktureller Defekt oder systematischer API-Ausfall
+    elif soft or cities != {c.name for c in config.CITIES}:
+        status = "WARN"
+    else:
+        status = "OK"
     report("X2 Raw-Schema polymarket", "Schema", status,
-           f"{problems}/{n} Verstoesse, Staedte={sorted(cities)}", "0 Verstoesse, 4 Staedte",
+           f"{hard} hart / {soft} weich von {n}, Staedte={sorted(cities)}",
+           f"0 hart, weich<={SOFT_VIOLATION_MAX_RATE:.0%}, 4 Staedte",
            os.path.basename(f or ""))
 
 

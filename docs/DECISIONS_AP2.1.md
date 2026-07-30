@@ -49,6 +49,24 @@ Freshness (3), Volume (2), Schema (3, inkl. Silver-Spaltenabgleich gegen freigeg
 Schema), Nulls/Verteilung (8, inkl. Label-Abdeckung, Normierung, PK, Leakage-Audit),
 Lineage (2, DuckDB==Parquet, Version/Staleness).
 
+## Nachtrag 2026-07-30 — U3 erweitert: X2-Check trennt nach Schweregrad
+
+Betriebserfahrung (Vorfall `docs/incident_2026-07-30_gate-fail.md`) zeigte, dass die
+ursprüngliche „0 Verstöße erlaubt"-Regel für X2 **zu streng** war: ein frisch
+gelisteter Markt ohne `outcomePrices` (legitimer, ~1 h kurzer Gamma-Zustand) ließ
+7 Läufe in Folge rot werden — obwohl `build_silver` solche Buckets sauber überspringt
+und die Daten einwandfrei waren.
+
+Neue Regel im X2-Check: **hart** (kaputtes JSON, fehlende Top-Level-Keys, Event ohne
+Datum) → FAIL; **weich** (einzelner Markt ohne/mit unparsebarem `outcomePrices`/
+`clobTokenIds`, leeres `groupItemTitle`) → WARN; weich über
+`SOFT_VIOLATION_MAX_RATE = 5 %` der Zeilen → doch FAIL (systematischer API-Ausfall).
+
+Begründung/Prinzip: **Ein Check darf nicht strenger sein als die Verarbeitung, die er
+absichert.** FAIL heißt „Datenprodukt nicht vertrauenswürdig", nicht „irgendetwas
+weicht ab". Damit ist die Raten-Schwellen-Logik (analog `CORRUPT_MAX_RATE` in
+`build_silver.py`, AP 2.3/U3) durchgängiges Entwurfsmuster im Projekt.
+
 ## Offene Punkte / Übergabe
 
 - 📌 AP 2.2: Schwellwert-Alarme auf dem `--json`-Output + Alerting-Konzept (nur konzeptionell).
