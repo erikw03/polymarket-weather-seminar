@@ -19,16 +19,16 @@ Legende: ✍️ geschrieben · 🔄 zu ergänzen · ⬜ offen
 |---|---|---|---|---|
 | 1 | Einleitung & Use-Case | 150 | – | ⬜ |
 | 2 | Vorgehen & Architektur | 400 | 352 | ✍️ |
-| 3 | Ingestion & Speicherung | 400 | 302 | 🔄 (+~95) |
+| 3 | Ingestion & Speicherung | 400 | 403 | ✍️ |
 | 4 | **Transformation & Datenmodell** *(neu)* | 350 | 325 | ✍️ |
 | 5 | Betriebskonzept: Observability & Fehlertoleranz | 450 | 383 | ✍️ |
-| 6 | Ergebnisse *(kompakt)* | 130 | – | ⬜ |
+| 6 | Ergebnisse *(kompakt)* | 130 | 116 | ✍️ |
 | 7 | Fazit & Ausblick | 120 | – | ⬜ |
-| | **Summe** | **2.000** | **1.362** | 68 % |
+| | **Summe** | **2.000** | **1.579** | 79 % |
 
 ---
 
-## 1 — Einleitung & Use-Case (150 W)
+## 1 — Einleitung & Use-Case (150 W → **auf ~200 W erhöht**, s. Hinweis unten)
 
 Prognosemärkte als Informationsaggregatoren; Fragestellung: Wie gut tracken
 Polymarkets implizite Wahrscheinlichkeiten für Tages-Höchsttemperaturen Prognose und
@@ -96,7 +96,7 @@ Vergleichstabelle **in den Anhang**, nicht in den Fließtext.
 **Belege:** `docs/modell1_logreg_ergebnisse.md`, `docs/modell2_gbm_ergebnisse.md`.
 **Datei:** `06_ergebnisse.md`
 
-## 7 — Fazit & Ausblick (120 W) ⬜
+## 7 — Fazit & Ausblick (120 W → **auf ~160 W erhöht**, s. Hinweis unten) ⬜
 
 Pipeline erfüllt ihren Zweck: belastbarer, auditierbarer, reproduzierbarer Korpus.
 Limitierender Faktor ist Datenqualität, nicht Modellierung. Ausblick: Skalierungspfad
@@ -111,3 +111,13 @@ Limitierender Faktor ist Datenqualität, nicht Modellierung. Ausblick: Skalierun
 Code-Auszüge (`run_ingestion.py`, `src/raw_store.py`, `build_silver.py` As-of-Logik,
 `quality_checks.py`), Schema- und Lineage-Tabelle, Modell-Vergleichstabelle,
 Architekturdiagramm aus `docs/lineage.md`.
+
+---
+
+## Budget-Nachsteuerung (Stand AP F4)
+
+Die Abschnitte 2–6 liegen zusammen **151 W unter** ihrem Budget (1.579 statt 1.730).
+Damit die Arbeit nicht deutlich unter 2.000 W landet, werden Einleitung und Fazit
+entsprechend angehoben: **Einleitung ~200 W** (statt 150), **Fazit ~160 W** (statt 120).
+Erwarteter Endstand: **~1.940 W** — innerhalb der üblichen Toleranz von „ca. 2.000",
+mit Reserve für Quellenverweise bei der Endredaktion.

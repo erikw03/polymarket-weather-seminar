@@ -18,9 +18,20 @@ Fragestellung zu verbessern. Konzeptionell bleibt die Nähe erhalten: Jede Zeile
 Rohdateien ist ein unveränderliches Ereignis mit Zeitstempel und entspricht damit
 einem Datensatz in einem Kafka-Topic.
 
+Ein Lauf verarbeitet die drei Quellen nacheinander und gegeneinander abgeschottet:
+Fällt eine aus, laufen die übrigen zu Ende. Jede Antwort wird unverändert in eine
+schlanke Hülle gelegt, die Quelle, Stadt, Abrufzeitpunkt, Wetterstation und
+Maßeinheit festhält – diese Angaben tragen später sowohl die Deduplizierung als auch
+den Herkunftsnachweis. Vorübergehende Fehler wie Zeitüberschreitungen oder
+Serverfehler werden mit wachsenden Wartezeiten wiederholt, dauerhafte Fehler dagegen
+sofort durchgereicht. Der Nachfasslauf für Marktauflösungen prüft zunächst den
+Bestand und fragt nur Ereignisse ab, für die noch kein Ergebnis vorliegt; er ist
+dadurch beliebig oft wiederholbar.
+
 Die Bronze-Zone speichert diese Ereignisse als tagesrotierende NDJSON-Dateien, rein
 anfügend und unverändert. Zeilenweises Anfügen ist absturzsicher, benötigt keine
-Sperren bei parallelen Läufen und bleibt versionierbar. Silver und Gold liegen
+Sperren bei parallelen Läufen und bleibt versionierbar. Die Tagesrotation dient
+zugleich als Partitionierung: Ein Kalendertag entspricht genau einer Datei je Quelle. Silver und Gold liegen
 dagegen in DuckDB, ergänzt um nach Stadt partitionierte Parquet-Dateien als
 portables Austauschformat. Der Kontrast begründet die Architektur: [Z: 718 MB]
 Rohdaten destillieren zu [Z: 2,3 MB] geprüfter Silver-Daten. Bronze ist Archiv,
@@ -42,7 +53,7 @@ schlüsselfreie Schnittstellen ohne personenbezogene Daten gelesen werden; einzi
 Geheimnis ist das eng begrenzte Zugriffstoken des externen Auslösers.
 
 ---
-*Wortzahl: 309 Fließtext (Budget 350; ~41 W Reserve für Überarbeitung/Quellenverweise).
+*Wortzahl: 403 Fließtext (Budget 400 — punktgenau, +3 W Toleranz).
 Belege: `docs/lineage.md`
 (Quellen-Register, Datenfluss), `src/raw_store.py`, `src/ingest_resolutions.py`,
 `.github/workflows/ingest.yml`, `docs/betriebskonzept_notizen.md` §K1.*
