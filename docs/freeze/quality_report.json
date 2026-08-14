@@ -1,0 +1,151 @@
+{
+  "run_at_utc": "2026-08-14T07:18:26.029394+00:00",
+  "results": [
+    {
+      "check": "F1 weather-Snapshot",
+      "saeule": "Freshness",
+      "status": "OK",
+      "wert": "0.6h",
+      "schwelle": "WARN>2.5h FAIL>6.0h",
+      "hinweis": "weather_2026-08-14.ndjson"
+    },
+    {
+      "check": "F2 polymarket-Snapshot",
+      "saeule": "Freshness",
+      "status": "OK",
+      "wert": "0.6h",
+      "schwelle": "WARN>2.5h FAIL>6.0h",
+      "hinweis": "polymarket_2026-08-14.ndjson"
+    },
+    {
+      "check": "F3 resolutions",
+      "saeule": "Freshness",
+      "status": "OK",
+      "wert": "1.2h",
+      "schwelle": "WARN>36.0h FAIL>72.0h",
+      "hinweis": "resolutions_2026-08-14.ndjson"
+    },
+    {
+      "check": "V1 weather Zeilen/Tag",
+      "saeule": "Volume",
+      "status": "OK",
+      "wert": "54 Tage, 0 auffaellig",
+      "schwelle": "Band (180, 400), FAIL<96",
+      "hinweis": ""
+    },
+    {
+      "check": "V2 polymarket Zeilen/Tag",
+      "saeule": "Volume",
+      "status": "OK",
+      "wert": "54 Tage, 0 auffaellig",
+      "schwelle": "Band (90, 200), FAIL<48",
+      "hinweis": ""
+    },
+    {
+      "check": "X1 Raw-Schema weather",
+      "saeule": "Schema",
+      "status": "OK",
+      "wert": "0/88 Verstoesse",
+      "schwelle": "0 erlaubt",
+      "hinweis": "weather_2026-08-14.ndjson"
+    },
+    {
+      "check": "X2 Raw-Schema polymarket",
+      "saeule": "Schema",
+      "status": "OK",
+      "wert": "0 hart / 0 weich von 44, Staedte=['London', 'Munich', 'NYC', 'Tokyo']",
+      "schwelle": "0 hart, weich<=5%, 4 Staedte",
+      "hinweis": "polymarket_2026-08-14.ndjson"
+    },
+    {
+      "check": "X3 Silver-Spalten == Schema",
+      "saeule": "Schema",
+      "status": "OK",
+      "wert": "46 Spalten",
+      "schwelle": "exakte Menge",
+      "hinweis": ""
+    },
+    {
+      "check": "N1 offizielle Label-Abdeckung",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "100.0%",
+      "schwelle": "WARN<99% FAIL<95%",
+      "hinweis": "Tage <= heute-3"
+    },
+    {
+      "check": "N2a forecast_max NULL-Rate",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "0.0%",
+      "schwelle": "WARN>2%",
+      "hinweis": ""
+    },
+    {
+      "check": "N2b clob_mid NULL-Rate (live)",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "0.0%",
+      "schwelle": "WARN>10%",
+      "hinweis": ""
+    },
+    {
+      "check": "N2c observed NULL-Rate (reife Tage)",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "0.0%",
+      "schwelle": "WARN>5%",
+      "hinweis": ""
+    },
+    {
+      "check": "N3a Overround-Ausreisser-Rate",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "3.7%",
+      "schwelle": "WARN>5%",
+      "hinweis": ""
+    },
+    {
+      "check": "N3b Normierung sum=1",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "3.3e-16",
+      "schwelle": "FAIL>=1e-6",
+      "hinweis": ""
+    },
+    {
+      "check": "N3c PK-Eindeutigkeit",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "0 Duplikate",
+      "schwelle": "0 erlaubt",
+      "hinweis": ""
+    },
+    {
+      "check": "N4 Leakage-Audit min lead",
+      "saeule": "Nulls/Verteilung",
+      "status": "OK",
+      "wert": "8.0h",
+      "schwelle": "FAIL<7.9h",
+      "hinweis": "Konstruktionsminimum NYC=8h"
+    },
+    {
+      "check": "L1 DuckDB == Parquet",
+      "saeule": "Lineage",
+      "status": "OK",
+      "wert": "6887 vs 6887",
+      "schwelle": "gleich",
+      "hinweis": ""
+    },
+    {
+      "check": "L2 Version/Staleness",
+      "saeule": "Lineage",
+      "status": "OK",
+      "wert": "build=2026-08-14 07:17, versions=1",
+      "schwelle": "1 Version; build >= juengster Raw-Tag",
+      "hinweis": "juengster Raw-Tag 2026-08-14"
+    }
+  ],
+  "n_fail": 0,
+  "n_warn": 0
+}

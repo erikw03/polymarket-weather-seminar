@@ -1,0 +1,1076 @@
+{
+  "run_at_utc": "2026-08-14T07:18:26.635078+00:00",
+  "findings": [
+    {
+      "severity": "WARN",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-04-13",
+      "wert": "5.5C",
+      "fence": ">4.9C",
+      "hinweis": ""
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-03-04",
+      "wert": "p=0.017",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-05-04",
+      "wert": "p=0.001",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-05-10",
+      "wert": "p=0.014",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-07-18",
+      "wert": "p=0.016",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-07-21",
+      "wert": "p=0.017",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Munich",
+      "target_date": "2026-08-06",
+      "wert": "p=0.011",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-06-07",
+      "wert": "p=0.010",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-06-15",
+      "wert": "p=0.012",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-04-27",
+      "wert": "p=0.011",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "WARN",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-08-11",
+      "wert": "p=0.005",
+      "fence": "<0.02",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-03-06",
+      "wert": "3.1C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-04-08",
+      "wert": "3.0C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-05-04",
+      "wert": "2.7C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-05-23",
+      "wert": "2.4C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-06-24",
+      "wert": "2.7C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-07-08",
+      "wert": "2.5C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-07-21",
+      "wert": "2.7C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "London",
+      "target_date": "2026-07-27",
+      "wert": "3.3C",
+      "fence": ">2.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-05-30",
+      "wert": "2.9C",
+      "fence": ">2.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-05-31",
+      "wert": "3.9C",
+      "fence": ">2.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-06-21",
+      "wert": "3.1C",
+      "fence": ">2.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-06-27",
+      "wert": "3.0C",
+      "fence": ">2.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-06-28",
+      "wert": "4.0C",
+      "fence": ">2.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-07-29",
+      "wert": "3.1C",
+      "fence": ">2.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Munich",
+      "target_date": "2026-07-31",
+      "wert": "3.0C",
+      "fence": ">2.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-03-02",
+      "wert": "3.7C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-03-04",
+      "wert": "4.2C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-03-08",
+      "wert": "3.3C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-03-09",
+      "wert": "3.6C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-04-03",
+      "wert": "4.7C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-04-05",
+      "wert": "3.5C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-05-23",
+      "wert": "3.1C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-05-27",
+      "wert": "3.3C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "NYC",
+      "target_date": "2026-07-05",
+      "wert": "3.6C",
+      "fence": ">3.1C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Tokyo",
+      "target_date": "2026-04-15",
+      "wert": "4.0C",
+      "fence": ">3.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Tokyo",
+      "target_date": "2026-04-23",
+      "wert": "4.2C",
+      "fence": ">3.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Tokyo",
+      "target_date": "2026-04-27",
+      "wert": "3.7C",
+      "fence": ">3.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Tokyo",
+      "target_date": "2026-05-29",
+      "wert": "3.8C",
+      "fence": ">3.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Tokyo",
+      "target_date": "2026-07-13",
+      "wert": "3.5C",
+      "fence": ">3.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Tokyo",
+      "target_date": "2026-07-29",
+      "wert": "3.8C",
+      "fence": ">3.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A1 Forecast-Miss",
+      "city": "Tokyo",
+      "target_date": "2026-08-11",
+      "wert": "4.2C",
+      "fence": ">3.3C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-04-08",
+      "wert": "6.4C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-04-10",
+      "wert": "8.7C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-05-10",
+      "wert": "7.2C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-05-27",
+      "wert": "8.1C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-05-31",
+      "wert": "6.1C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-06-26",
+      "wert": "6.1C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-07-30",
+      "wert": "6.1C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "London",
+      "target_date": "2026-08-12",
+      "wert": "7.5C",
+      "fence": ">5.8C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-03-26",
+      "wert": "8.5C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-04-05",
+      "wert": "8.6C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-04-06",
+      "wert": "6.1C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-05-12",
+      "wert": "8.0C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-06-09",
+      "wert": "8.6C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-06-13",
+      "wert": "7.7C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-07-25",
+      "wert": "7.0C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Munich",
+      "target_date": "2026-08-06",
+      "wert": "6.3C",
+      "fence": ">6.0C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-03-08",
+      "wert": "11.2C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-03-13",
+      "wert": "11.7C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-03-26",
+      "wert": "11.0C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-03-28",
+      "wert": "12.2C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-04-02",
+      "wert": "14.1C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-04-13",
+      "wert": "13.6C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-04-23",
+      "wert": "10.6C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "NYC",
+      "target_date": "2026-05-21",
+      "wert": "14.2C",
+      "fence": ">10.4C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-03-14",
+      "wert": "5.2C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-03-20",
+      "wert": "6.7C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-04-05",
+      "wert": "5.3C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-05-01",
+      "wert": "5.3C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-05-22",
+      "wert": "5.4C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-05-29",
+      "wert": "5.4C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-07-29",
+      "wert": "6.1C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A2 Ist-Sprung",
+      "city": "Tokyo",
+      "target_date": "2026-08-03",
+      "wert": "6.8C",
+      "fence": ">5.2C",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-04-13",
+      "wert": "p=0.044",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-05-07",
+      "wert": "p=0.043",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "London",
+      "target_date": "2026-06-23",
+      "wert": "p=0.044",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-03-01",
+      "wert": "p=0.042",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-03-14",
+      "wert": "p=0.033",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-03-27",
+      "wert": "p=0.034",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-04-18",
+      "wert": "p=0.046",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-07-05",
+      "wert": "p=0.045",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "NYC",
+      "target_date": "2026-07-14",
+      "wert": "p=0.029",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-03-18",
+      "wert": "p=0.030",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-05-04",
+      "wert": "p=0.039",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-05-10",
+      "wert": "p=0.043",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-05-15",
+      "wert": "p=0.036",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-07-04",
+      "wert": "p=0.026",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-07-07",
+      "wert": "p=0.021",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-07-13",
+      "wert": "p=0.035",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-07-25",
+      "wert": "p=0.022",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A3 Ueberraschungssieger",
+      "city": "Tokyo",
+      "target_date": "2026-08-12",
+      "wert": "p=0.043",
+      "fence": "<0.05",
+      "hinweis": "Markt lag weit daneben (oder Label pruefen)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A5 Bucket-Anzahl",
+      "city": "Munich",
+      "target_date": "2026-03-30",
+      "wert": "7",
+      "fence": "<9",
+      "hinweis": "duenn gehandelter Tag (U3-Ausschluesse moeglich)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A6 Duenner Markt",
+      "city": "Munich",
+      "target_date": "2026-06-18",
+      "wert": "vol=3,336",
+      "fence": "<20% von median 29,415",
+      "hinweis": ""
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "London",
+      "target_date": "2026-03-30",
+      "wert": "sum=1.11",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "London",
+      "target_date": "2026-04-06",
+      "wert": "sum=0.70",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "London",
+      "target_date": "2026-04-07",
+      "wert": "sum=1.13",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "London",
+      "target_date": "2026-04-09",
+      "wert": "sum=1.35",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "London",
+      "target_date": "2026-05-20",
+      "wert": "sum=1.14",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-03-05",
+      "wert": "sum=1.19",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-03-06",
+      "wert": "sum=1.12",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-03-07",
+      "wert": "sum=1.26",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-03-08",
+      "wert": "sum=1.10",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-03-10",
+      "wert": "sum=1.18",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-03-30",
+      "wert": "sum=0.70",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-05-20",
+      "wert": "sum=1.39",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-05-31",
+      "wert": "sum=1.10",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Munich",
+      "target_date": "2026-06-18",
+      "wert": "sum=1.11",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "NYC",
+      "target_date": "2026-03-30",
+      "wert": "sum=0.72",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "NYC",
+      "target_date": "2026-04-13",
+      "wert": "sum=1.11",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "NYC",
+      "target_date": "2026-04-20",
+      "wert": "sum=0.89",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "NYC",
+      "target_date": "2026-05-20",
+      "wert": "sum=1.14",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Tokyo",
+      "target_date": "2026-03-12",
+      "wert": "sum=1.14",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Tokyo",
+      "target_date": "2026-04-02",
+      "wert": "sum=1.10",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Tokyo",
+      "target_date": "2026-04-06",
+      "wert": "sum=1.14",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Tokyo",
+      "target_date": "2026-04-07",
+      "wert": "sum=1.10",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Tokyo",
+      "target_date": "2026-04-08",
+      "wert": "sum=1.11",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Tokyo",
+      "target_date": "2026-04-12",
+      "wert": "sum=1.13",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    },
+    {
+      "severity": "INFO",
+      "check": "A8 Overround-Tag",
+      "city": "Tokyo",
+      "target_date": "2026-04-23",
+      "wert": "sum=0.88",
+      "fence": "|sum-1|>0.10",
+      "hinweis": "as-of fiel auf frisches Listing (Platzhalter-Quotes)"
+    }
+  ]
+}
