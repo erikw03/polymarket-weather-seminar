@@ -18,13 +18,13 @@ Legende: ✍️ geschrieben · 🔄 zu ergänzen · ⬜ offen
 | # | Abschnitt | Budget | Ist | Status |
 |---|---|---|---|---|
 | 1 | Einleitung & Use-Case | 150 | – | ⬜ |
-| 2 | Vorgehen & Architektur | 400 | 358 | ✍️ |
-| 3 | Ingestion & Speicherung | 400 | 311 | 🔄 (+~90) |
-| 4 | **Transformation & Datenmodell** *(neu)* | 350 | 330 | ✍️ |
-| 5 | Betriebskonzept: Observability & Fehlertoleranz | 450 | – | ⬜ |
+| 2 | Vorgehen & Architektur | 400 | 352 | ✍️ |
+| 3 | Ingestion & Speicherung | 400 | 302 | 🔄 (+~95) |
+| 4 | **Transformation & Datenmodell** *(neu)* | 350 | 325 | ✍️ |
+| 5 | Betriebskonzept: Observability & Fehlertoleranz | 450 | 383 | ✍️ |
 | 6 | Ergebnisse *(kompakt)* | 130 | – | ⬜ |
 | 7 | Fazit & Ausblick | 120 | – | ⬜ |
-| | **Summe** | **2.000** | **669** | 33 % |
+| | **Summe** | **2.000** | **1.362** | 68 % |
 
 ---
 
