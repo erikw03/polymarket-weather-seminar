@@ -20,7 +20,7 @@ Legende: ✍️ geschrieben · 🔄 zu ergänzen · ⬜ offen
 | 1 | Einleitung & Use-Case | 150 | – | ⬜ |
 | 2 | Vorgehen & Architektur | 400 | 358 | ✍️ |
 | 3 | Ingestion & Speicherung | 400 | 311 | 🔄 (+~90) |
-| 4 | **Transformation & Datenmodell** *(neu)* | 350 | – | ⬜ |
+| 4 | **Transformation & Datenmodell** *(neu)* | 350 | 330 | ✍️ |
 | 5 | Betriebskonzept: Observability & Fehlertoleranz | 450 | – | ⬜ |
 | 6 | Ergebnisse *(kompakt)* | 130 | – | ⬜ |
 | 7 | Fazit & Ausblick | 120 | – | ⬜ |
