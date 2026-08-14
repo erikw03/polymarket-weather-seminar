@@ -12,16 +12,16 @@ Yes-Preis des späteren Gewinners stieg an einem Beispieltag von 0,40 (09:01 UTC
 auf den letzten Stand vor Mitternacht Ortszeit des Zieltags einzufrieren; andernfalls
 hätte das Modell bereits realisierte Temperatur als Vorhersage verwendet. Zweitens
 ergab die spätere Quantifizierung, dass das ursprünglich gewählte Label aus der
-Wetter-Reanalyse nur in [Z: 23 %] der Fälle exakt mit dem offiziellen Marktergebnis
-übereinstimmt, mit einem systematischen Versatz von bis zu [Z: +2 °C] in München.
+Wetter-Reanalyse nur in 32,7 % der Fälle exakt mit dem offiziellen Marktergebnis
+übereinstimmt, mit einem systematischen Versatz von bis zu +1,4 °C in München.
 Diese Erkenntnis führte zum Wechsel der Label-Quelle — ein Eingriff, der ohne
 verlustfreie Rohdatenhaltung nicht mehr möglich gewesen wäre.
 
 Genau deshalb folgt die Speicherarchitektur dem Medallion-Ansatz. Die Bronze-Zone
 hält alle API-Antworten unverändert und ausschließlich anfügend (write once, read
-many); sie umfasst derzeit [Z: 718 MB in 104 Tagesdateien aus 42 Sammeltagen].
-Die Silver-Zone destilliert daraus [Z: 6.227] bereinigte, typisierte Zeilen
-([Z: 575] Stadt-Tage), die Gold-Zone die daraus abgeleitete Merkmalstabelle für die
+many); sie umfasst derzeit rund 1 Gigabyte in 149 Tagesdateien aus 57 Sammeltagen.
+Die Silver-Zone destilliert daraus 6.887 bereinigte, typisierte Zeilen
+(635 Stadt-Tage), die Gold-Zone die daraus abgeleitete Merkmalstabelle für die
 Modellierung. Entscheidend ist die Rückrichtung: Beide abgeleiteten Zonen werden bei
 jedem Lauf vollständig und deterministisch neu erzeugt. Die beiden oben genannten
 Korrekturen erforderten daher lediglich einen erneuten Transformationslauf und keine

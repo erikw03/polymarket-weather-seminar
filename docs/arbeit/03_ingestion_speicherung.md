@@ -8,7 +8,7 @@ Reanalyse-Messwerte von Open-Meteo, Marktdaten von Polymarket sowie – als eige
 dritte Quelle – die offiziellen Marktauflösungen. Letztere sind notwendig, weil
 aufgelöste Märkte aus der laufenden Abfrage verschwinden; ein täglicher, idempotenter
 Nachfasslauf sichert das amtliche Ergebnis, bevor es verloren geht. Die Erfassung
-läuft stündlich und erreicht [Z: 33–38] Abrufe je Stadt und Tag.
+läuft stündlich und erreicht 39 bis 45 Abrufe je Stadt und Tag.
 
 Bewusst wird periodisches Batch-Polling statt eines Streaming-Ansatzes eingesetzt.
 Die Märkte lösen einmal täglich auf, die zugrunde liegenden Wettermodelle
@@ -33,12 +33,12 @@ anfügend und unverändert. Zeilenweises Anfügen ist absturzsicher, benötigt k
 Sperren bei parallelen Läufen und bleibt versionierbar. Die Tagesrotation dient
 zugleich als Partitionierung: Ein Kalendertag entspricht genau einer Datei je Quelle. Silver und Gold liegen
 dagegen in DuckDB, ergänzt um nach Stadt partitionierte Parquet-Dateien als
-portables Austauschformat. Der Kontrast begründet die Architektur: [Z: 718 MB]
-Rohdaten destillieren zu [Z: 2,3 MB] geprüfter Silver-Daten. Bronze ist Archiv,
+portables Austauschformat. Der Kontrast begründet die Architektur: rund 1 Gigabyte
+Rohdaten destillieren zu 3 Megabyte geprüfter Silver-Daten. Bronze ist Archiv,
 nicht Arbeitsmenge.
 
 Aus derselben Größenordnung folgen zwei weitere Entscheidungen. Der vollständige
-Neuaufbau beider abgeleiteten Zonen dauert [Z: 3,1 Sekunden] auf einem einzelnen
+Neuaufbau beider abgeleiteten Zonen dauert 4,2 Sekunden auf einem einzelnen
 Rechenkern. Verteilte Verarbeitung (Hadoop, Spark) wäre daher reiner Overhead; sie
 würde erst bei Datenmengen jenseits des Arbeitsspeichers oder bei mehreren hundert
 Städten lohnen. Und weil der Neuaufbau so günstig ist, wird bewusst vollständig statt

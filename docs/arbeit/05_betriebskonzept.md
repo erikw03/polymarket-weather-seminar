@@ -5,7 +5,7 @@
 
 Da die Erfassung unbeaufsichtigt läuft und Marktpreise nicht rückwirkend beschafft
 werden können, ist die Überwachung kein Zusatz, sondern Teil der Pipeline. Umgesetzt
-sind die fünf Säulen der Datenqualität in [Z: 18] automatisierten Prüfungen, die nach
+sind die fünf Säulen der Datenqualität in 18 automatisierten Prüfungen, die nach
 jedem Lauf ausgeführt werden. Sie decken Aktualität (Alter des jüngsten Abrufs je
 Quelle), Menge (Zeilen je Tagesdatei gegen ein erwartetes Band), Schema
 (Pflichtfelder, Dekodierbarkeit verschachtelter Felder, Abgleich der Silver-Spalten
@@ -38,7 +38,7 @@ entstand die Regel, zwischen strukturellen Defekten und bekannten, vorübergehen
 Zuständen zu unterscheiden – eine Prüfung darf nicht strenger sein als die
 Verarbeitung, die sie absichert.
 
-Die Fehlertoleranz selbst ist nicht behauptet, sondern in [Z: acht] reproduzierbaren
+Die Fehlertoleranz selbst ist nicht behauptet, sondern in acht reproduzierbaren
 Nachweisen abgesichert. Sie belegen unter anderem, dass nur vorübergehende Fehler
 wiederholt werden, dauerhafte Ausfälle begrenzt abbrechen, der Ausfall einer Quelle
 die übrigen nicht beeinträchtigt, einzelne beschädigte Zeilen übersprungen statt

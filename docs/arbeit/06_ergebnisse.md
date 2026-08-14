@@ -4,16 +4,16 @@
 > der Arbeit liegt auf Aufbau und Betrieb der Pipeline. Vergleichstabelle im Anhang.
 > Budget: 130 Wörter — Ist siehe Fußzeile.
 
-Der erzeugte Korpus umfasst [Z: 618] Stadt-Tage im Zeitraum [Z: März bis August 2026].
+Der erzeugte Korpus umfasst 618 Stadt-Tage im Zeitraum März bis August 2026.
 Bewertet wird nicht die einzelne Zeile, sondern die je Stadt und Zieltag normierte
 Wahrscheinlichkeitsverteilung über alle Temperatur-Buckets; validiert wird zeitlich
 fortschreitend mit einer Sperrfrist von zwei Tagen, da amtliche Ergebnisse verzögert
 eintreffen.
 
 Beide Modelle übertreffen die naive Prognoseregel deutlich, bleiben aber hinter dem
-Markt zurück ([Z: Brier 0,79 gegenüber 0,66]). Bemerkenswert ist der Grund: Die
+Markt zurück (Brier 0,79 gegenüber 0,66). Bemerkenswert ist der Grund: Die
 Wahrscheinlichkeiten sind nahezu gleich gut kalibriert; der Markt trifft lediglich
-häufiger das richtige Intervall ([Z: 47,5 % gegenüber 33 %]). Der Vorsprung beruht
+häufiger das richtige Intervall (47,5 % gegenüber 33 %). Der Vorsprung beruht
 somit auf zusätzlicher Information, nicht auf besserer Wahrscheinlichkeitsschätzung.
 Dazu passt, dass das komplexere Verfahren die interpretierbare Basislösung nicht
 schlägt – begrenzend wirkt die Informationsbasis, nicht die Modellklasse.

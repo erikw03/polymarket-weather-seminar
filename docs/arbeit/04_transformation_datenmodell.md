@@ -9,20 +9,20 @@ Zieltag. Diese Wahl folgt der Struktur der Quelle, denn auf Polymarket ist jeder
 Bucket technisch ein eigener binärer Markt mit eigener Kennung und eigenem
 Orderbuch. Eine gröbere Modellierung auf Ereignisebene wurde verworfen, weil Anzahl
 und Zuschnitt der Buckets zwischen Städten variieren und ein starres Spaltenschema
-daran zerbrechen würde. Insgesamt entstehen [Z: 6.887] Zeilen für [Z: 618] Stadt-Tage.
+daran zerbrechen würde. Insgesamt entstehen 6.887 Zeilen für 635 Stadt-Tage.
 
-Die wichtigste Regel der Transformation ist zeitlicher Natur. Von den rund [Z: 41]
+Die wichtigste Regel der Transformation ist zeitlicher Natur. Von den rund 41
 Abrufen je Stadt und Tag geht genau einer in die Merkmale ein: der letzte vor
 Mitternacht Ortszeit des Zieltags. Damit liegt das Tagesmaximum zum Bewertungs­
 zeitpunkt vollständig in der Zukunft. Das nominelle Marktende um 12:00 UTC wäre als
 Schnitt ungeeignet, da es lokal je nach Stadt bereits Nachmittag oder Abend ist. Wie
 weit jede Zeile vom Marktende entfernt ist, wird als eigene Spalte mitgeführt und
-maschinell geprüft; der geringste Vorlauf im Korpus beträgt [Z: 8,0] Stunden.
+maschinell geprüft; der geringste Vorlauf im Korpus beträgt 8,0 Stunden.
 
 Als Zielgröße dient das amtliche Marktergebnis. Die zunächst verwendete
 Reanalyse-Messung wird weiterhin als Vergleichsgröße geführt: Beide Quellen stimmen
-nur in [Z: 32,7 %] der Fälle exakt überein, mit einem systematischen Versatz von
-[Z: +1,35 °C] in München. Dieser Quellenunterschied ist als Limitation dokumentiert
+nur in 32,7 % der Fälle exakt überein, mit einem systematischen Versatz von
++1,4 °C in München. Dieser Quellenunterschied ist als Limitation dokumentiert
 und war der Grund für den Wechsel der Zielgröße.
 
 Erheblichen Anteil hat die Vereinheitlichung heterogener Rohdaten. Preise und
