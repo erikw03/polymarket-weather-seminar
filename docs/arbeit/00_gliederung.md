@@ -17,14 +17,14 @@ Legende: ✍️ geschrieben · 🔄 zu ergänzen · ⬜ offen
 
 | # | Abschnitt | Budget | Ist | Status |
 |---|---|---|---|---|
-| 1 | Einleitung & Use-Case | 150 | – | ⬜ |
+| 1 | Einleitung & Use-Case | 200 | 174 | ✍️ |
 | 2 | Vorgehen & Architektur | 400 | 352 | ✍️ |
 | 3 | Ingestion & Speicherung | 400 | 403 | ✍️ |
 | 4 | **Transformation & Datenmodell** *(neu)* | 350 | 325 | ✍️ |
 | 5 | Betriebskonzept: Observability & Fehlertoleranz | 450 | 383 | ✍️ |
 | 6 | Ergebnisse *(kompakt)* | 130 | 116 | ✍️ |
-| 7 | Fazit & Ausblick | 120 | – | ⬜ |
-| | **Summe** | **2.000** | **1.579** | 79 % |
+| 7 | Fazit & Ausblick | 160 | 141 | ✍️ |
+| | **Summe** | **2.000** | **1.894** | **95 % — Text vollständig** |
 
 ---
 
