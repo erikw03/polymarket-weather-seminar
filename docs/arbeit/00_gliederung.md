@@ -1,117 +1,113 @@
-# Detail-Gliederung der Seminararbeit (AP 4.2)
+# Detail-Gliederung der Seminararbeit — **Fassung 2 (14.08.)**
 
 **Thema:** Datenpipeline & -korpus aus Wetterprognose- und Prognosemarktdaten
-**Umfang:** 2.000 Wörter netto (~7–9 Seiten) + Code als Anhang (zählt nicht mit)
-**Abgabe:** 16.08.2026 · **Data Freeze:** 03.08.2026
+**Umfang:** 2.000 Wörter netto + Code als Anhang (zählt nicht mit)
 
-Legende Status: ✍️ geschrieben · ⬜ offen · Wortangaben = verbindliches Budget (U2).
+> **Umbau gegenüber Fassung 1 (30.07.) — Grund: Konsultationshinweis des Prüfers.**
+> Bewertet werden vorrangig **Umsetzung, Aufbau und Architektur der Pipeline**,
+> nicht die Analyseergebnisse. Konsequenzen:
+> 1. Ergebnisse von 400 → **130 W** (nur noch Kernaussage, keine Metrik-Diskussion).
+> 2. Neuer eigener Abschnitt **4 „Transformation & Datenmodell"** (350 W) — die
+>    Kern-Umsetzungsentscheidungen (Grain, As-of-Cut, Label, Idempotenz) waren bisher
+>    auf andere Abschnitte verteilt und damit unterrepräsentiert.
+> 3. Ingestion & Speicherung 350 → 400 W, Betriebskonzept 450 W (bleibt tragend).
+> → **Pipeline-Kapitel (2–5) = 1.600 W = 80 %** der Arbeit.
 
-| # | Abschnitt | Budget | Status | AP |
+Legende: ✍️ geschrieben · 🔄 zu ergänzen · ⬜ offen
+
+| # | Abschnitt | Budget | Ist | Status |
 |---|---|---|---|---|
-| 1 | Einleitung & Use-Case | 200 | ⬜ | 5.3 |
-| 2 | Vorgehen & Architektur | 400 | ✍️ | **4.2** |
-| 3 | Ingestion & Speicherung | 350 | ✍️ | **4.3** |
-| 4 | Betriebskonzept: Observability & Fehlertoleranz | 450 | ⬜ | 5.1 |
-| 5 | Analyse: Modelle vs. Markt | 400 | ⬜ | 5.2 |
-| 6 | Fazit & Ausblick | 200 | ⬜ | 5.3 |
-| | **Summe** | **2.000** | | |
+| 1 | Einleitung & Use-Case | 150 | – | ⬜ |
+| 2 | Vorgehen & Architektur | 400 | 358 | ✍️ |
+| 3 | Ingestion & Speicherung | 400 | 311 | 🔄 (+~90) |
+| 4 | **Transformation & Datenmodell** *(neu)* | 350 | – | ⬜ |
+| 5 | Betriebskonzept: Observability & Fehlertoleranz | 450 | – | ⬜ |
+| 6 | Ergebnisse *(kompakt)* | 130 | – | ⬜ |
+| 7 | Fazit & Ausblick | 120 | – | ⬜ |
+| | **Summe** | **2.000** | **669** | 33 % |
 
 ---
 
-## 1 — Einleitung & Use-Case (200 W, AP 5.3)
+## 1 — Einleitung & Use-Case (150 W)
 
-**Inhalt:** Prognosemärkte als Informationsaggregatoren; Forschungsfrage: *Wie gut
-tracken Polymarkets implizite Wahrscheinlichkeiten für Tages-Höchsttemperaturen die
-Wetterprognose und das tatsächliche Ergebnis?* Abgrenzung: rein analytisch, read-only,
-kein Handel (in DE ohnehin geoblockt). Zielgröße: Verteilung über ~11 Temperatur-Buckets
-je Stadt und Tag; Bewertung mit Brier/Log Loss/Accuracy.
+Prognosemärkte als Informationsaggregatoren; Fragestellung: Wie gut tracken
+Polymarkets implizite Wahrscheinlichkeiten für Tages-Höchsttemperaturen Prognose und
+Ergebnis? **Betonung auf dem Data-Engineering-Ziel:** Aufbau eines belastbaren,
+auditierbaren Korpus als Voraussetzung jeder Analyse. Abgrenzung: read-only, kein Handel.
 
-**Modulbezug:** CRISP-DM *Business Understanding* (K1).
-**Belege:** `README.md`, `docs/cleaned_schema_AP1.1.md` (§Zweck).
+**Modulbezug:** CRISP-DM *Business Understanding* (K1). **Belege:** `README.md`.
 
-## 2 — Vorgehen & Architektur (400 W, **AP 4.2 — geschrieben**)
+## 2 — Vorgehen & Architektur (400 W) ✍️ *fertig*
 
-**Inhalt:** CRISP-DM als Prozessrahmen mit zwei belegten Iterationsschleifen
-(Data-Understanding → Schemaänderung; Label-Revision D3). Medallion-Architektur
-Bronze→Silver→Gold, lokal/kostenfrei umgesetzt. Die 4 V's als Begründung der
-Architekturentscheidungen — insbesondere *Veracity* als eigentlicher Projektkern.
-Parallelität von Betrieb und Entwicklung (MLOps-Gedanke): Ingestion lief ab Tag 1
-produktiv, während Schema und Analyse entstanden.
+CRISP-DM iterativ mit zwei belegten Rückkopplungen (Leakage-Befund → As-of-Cut;
+Label-Mismatch → Quellenwechsel). Medallion Bronze→Silver→Gold. 4 V's als
+Dimensionierungsbegründung, *Veracity* als Projektkern. Betrieb und Entwicklung parallel.
 
-**Modulbezug:** CRISP-DM/MLOps (K1), 4 V's (K1), Medallion (K3+K4).
-**Belege:** `docs/architektur_notizen.md`, `docs/DECISIONS_AP1.1–1.3`,
-`docs/raw_inspection_report_AP1.1.md`.
+**Modulbezug:** CRISP-DM/MLOps, 4 V's, Medallion (K1, K3+K4).
 **Datei:** `02_architektur_vorgehen.md`
 
-## 3 — Ingestion & Speicherung (350 W, AP 4.3)
+## 3 — Ingestion & Speicherung (400 W) 🔄 *+~90 W ergänzen*
 
-**Inhalt:** Drei Quellen (Open-Meteo Forecast/Archiv, Polymarket Gamma+CLOB,
-Resolution-Fetcher). Stündliches Batch-Polling statt Streaming — mit Begründung
-(Märkte resolven täglich; Sub-Minuten-Latenz ohne Erkenntnisgewinn) → hier
-**Kafka/CDC nur konzeptionell** einordnen (jede NDJSON-Zeile ≙ Event).
-Speicherformate: NDJSON append-only (Bronze), DuckDB + Parquet (Silver/Gold),
-Partitionierung nach `city`; Volumenbegründung → **Hadoop/Spark nur konzeptionell**.
-Cloud-Betrieb über GitHub Actions + Git-Repo als Datenarchiv → **S3/Lambda-Analogie**.
-Kernentscheidung As-of-Cut (D-1 23:59 lokal) als Leakage-Schutz kurz anreißen.
+Bestand: drei Quellen, Batch-statt-Streaming (Kafka/CDC konzeptionell), NDJSON
+append-only, DuckDB+Parquet, 718 MB→2,3 MB, 3,1 s Rebuild (Hadoop/Spark konzeptionell),
+GitHub Actions als Cloud-Analogie, Sicherheit in einem Satz.
+**Zu ergänzen:** konkrete Umsetzung der Erfassung — Retry/Backoff-Politik, Trigger-
+Redundanz, Tagesrotation/Partitionierungsschema, Idempotenz des Resolution-Fetchers.
 
-**Modulbezug:** Rohformat/Parquet (K3+K4), Kafka/CDC (K3, konzeptionell),
-Hadoop/Spark (K4, konzeptionell), Cloud (K6, konzeptionell).
-**Belege:** `docs/lineage.md`, `docs/cleaned_schema_AP1.1.md`, `src/raw_store.py`,
-`.github/workflows/ingest.yml`.
-**Zahlen:** [Z: 718 MB Raw → 2,3 MB Silver; 3,1 s Full-Rebuild; 33–38 Abrufe/Stadt/Tag].
 **Datei:** `03_ingestion_speicherung.md`
 
-## 4 — Betriebskonzept: Observability & Fehlertoleranz (450 W, AP 5.1)
+## 4 — Transformation & Datenmodell (350 W) ⬜ **NEU — Kern der Umsetzung**
 
-**Inhalt:** Fünf Säulen mit Ist-Implementierung (Freshness/Volume/Schema/Nulls/Lineage)
-= 18 automatisierte Checks + 8 Anomalie-Checks; datengetriebene statt geratener
-Schwellwerte. Prepare–Detect–Resolve–Prevent an **drei realen Vorfällen**:
-(a) Scheduler-Ausfall 21.06. → Trigger-Redundanz; (b) Merge-Race 21.07. → union-merge
-+ Push-Retry; (c) Fehlalarm 30.07. → Schweregrad-Trennung im Check. Belegte
-Fehlertoleranz: 8/8 Resilienz-Nachweise (Retry-Politik, Quellen-Isolation, Idempotenz).
-Lineage bis Datei+Zeile demonstrierbar. Ehrliche Restrisiken.
+- **Grain:** 1 Zeile = Stadt × Zieltag × Temperatur-Bucket; Begründung (jeder Bucket ist
+  ein eigener binärer Markt), Alternative verworfen.
+- **As-of-Politik (Leakage-Schutz):** Einfrieren auf den letzten Stand vor Mitternacht
+  Ortszeit; warum `endDate` als Cut ungeeignet wäre; Audit-Spalte `hours_to_event_end`.
+- **Label-Definition und Revision:** Reanalyse vs. offizielle Marktauflösung, Wechsel
+  der Quelle, Mismatch als dokumentierte Limitation.
+- **Normalisierung:** gemischte Einheiten (NYC °F, 2-Grad-Bänder), Bucket-Parser,
+  doppelt kodiertes JSON, „jüngster Abruf gewinnt"-Dedup, datei-übergreifender Join.
+- **Idempotenz:** deterministischer Full-Rebuild + eingebaute QS-Abbrüche
+  (PK-Eindeutigkeit, genau ein Gewinner je Tag, Normierung, Leakage-Audit).
+- **Lineage:** jede Silver-Spalte auf Rohfeld + Regel zurückführbar.
+
+**Modulbezug:** Datenmodellierung/Aufbereitung, Medallion Silver (K3+K4).
+**Belege:** `docs/cleaned_schema_AP1.1.md`, `docs/DECISIONS_AP1.1–1.3`, `build_silver.py`,
+`docs/lineage.md`. **Datei:** `04_transformation_datenmodell.md`
+
+## 5 — Betriebskonzept: Observability & Fehlertoleranz (450 W) ⬜
+
+Fünf Säulen mit Ist-Implementierung (18 Qualitäts- + 8 Anomalie-Checks,
+datengetriebene Schwellwerte). Prepare–Detect–Resolve–Prevent an **drei realen
+Vorfällen**: Scheduler-Ausfall → Trigger-Redundanz; Merge-Race → union-merge +
+Push-Retry; Fehlalarm → Schweregrad-Trennung. 8/8 Resilienz-Nachweise. Restrisiken.
 
 **Modulbezug:** Observability 5 Säulen (K8), PDRP + Fehlertoleranz (K8+K10).
-**Belege:** `docs/betriebskonzept_notizen.md`, `docs/alerting_konzept.md`,
-`docs/incident_2026-07-21_*.md`, `docs/incident_2026-07-30_*.md`,
-`scripts/harden/test_resilience.py`, `quality_checks.py`, `anomaly_checks.py`.
+**Belege:** `docs/betriebskonzept_notizen.md`, `docs/alerting_konzept.md`, beide
+Incident-Docs, `scripts/harden/test_resilience.py`. **Datei:** `05_betriebskonzept.md`
 
-## 5 — Analyse: Modelle vs. Markt (400 W, AP 5.2)
+## 6 — Ergebnisse, kompakt (130 W) ⬜
 
-**Inhalt:** Analysis-Zone (Feature-Tabelle, Grain = Stadt × Tag × Bucket), zeitliche
-Validierung mit Embargo (Resolution-Latenz!), Bewertung auf Tages-Verteilungen.
-Zwei Modelle (LogReg, Gradient Boosting) gegen zwei Baselines (Markt, naive
-Forecast-Regel). **Kernbefund:** Markt führt (Brier [Z: 0,653] vs. [Z: 0,777/0,782]),
-aber *nicht* wegen besserer Kalibrierung (ECE nahezu gleich, GBM+isotonic sogar
-minimal besser) — sondern wegen **Schärfe**. Modell lernt den Station-über-Forecast-Bias
-selbstständig. GBM schlägt LogReg nicht → Engpass ist Information, nicht Modellklasse.
+**Bewusst knapp** (Prüferhinweis). Nur: Korpusumfang; Aufbau der Evaluation in zwei
+Sätzen (zeitliche Validierung mit Embargo, Bewertung auf Tagesverteilungen);
+**eine** Kernaussage — der Markt führt, aber wegen Schärfe, nicht wegen besserer
+Kalibrierung; die Modellklasse ist nicht der Engpass, sondern die Informationsbasis.
+Vergleichstabelle **in den Anhang**, nicht in den Fließtext.
 
-**Modulbezug:** CRISP-DM *Modeling/Evaluation* (K1).
-**Belege:** `docs/modell1_logreg_ergebnisse.md`, `docs/modell2_gbm_ergebnisse.md`,
-`model_framework.py`, JSON-Artefakte in `data/processed/analysis/`.
+**Belege:** `docs/modell1_logreg_ergebnisse.md`, `docs/modell2_gbm_ergebnisse.md`.
+**Datei:** `06_ergebnisse.md`
 
-## 6 — Fazit & Ausblick (200 W, AP 5.3)
+## 7 — Fazit & Ausblick (120 W) ⬜
 
-**Inhalt:** Pipeline erfüllt ihren Zweck (belastbarer, auditierbarer Korpus);
-Datenqualität ist der limitierende Faktor, nicht die Modellierung. Größte Limitation:
-Quellen-Mismatch Open-Meteo↔Wunderground ([Z: 23 % exakte Übereinstimmung,
-München-Bias +2 °C]) — gelöst durch Wechsel der Label-Quelle. Ausblick: mehr Leads,
-Ensemble-Spreads, stündliche Profile; Skalierungspfad zu mehr Städten.
+Pipeline erfüllt ihren Zweck: belastbarer, auditierbarer, reproduzierbarer Korpus.
+Limitierender Faktor ist Datenqualität, nicht Modellierung. Ausblick: Skalierungspfad
+(mehr Städte/Leads), Governance/Strategie je Halbsatz gestreift.
 
-**Modulbezug:** Reflexion/Governance (K11, gestreift).
-**Belege:** `docs/DECISIONS_AP1.2.md` (D3-Revision), `docs/modell2_gbm_ergebnisse.md` (§Fazit).
+**Datei:** `07_fazit.md`
 
 ---
-
-## Nicht behandelt (bewusst, mit Kurzbegründung im Text)
-
-- **Sicherheit (K9):** öffentliche, keylose APIs, keine personenbezogenen Daten →
-  ein Satz in Abschnitt 3 (einziges Geheimnis: PAT des externen Cron-Triggers).
-- **Governance breit (K11) / Strategie (K12):** für ein Ein-Personen-Forschungsprojekt
-  ohne Stakeholder-Struktur nicht sinnvoll skalierbar → je ein Halbsatz im Fazit.
 
 ## Anhang (zählt nicht zum Wortlimit)
 
-Code-Auszüge: `run_ingestion.py`, `src/raw_store.py`, `build_silver.py` (As-of-Logik),
-`quality_checks.py`, `model_framework.py`; Schema-Tabelle + Lineage-Tabelle aus
-`docs/cleaned_schema_AP1.1.md`; Vergleichstabelle der Modelle.
+Code-Auszüge (`run_ingestion.py`, `src/raw_store.py`, `build_silver.py` As-of-Logik,
+`quality_checks.py`), Schema- und Lineage-Tabelle, Modell-Vergleichstabelle,
+Architekturdiagramm aus `docs/lineage.md`.
