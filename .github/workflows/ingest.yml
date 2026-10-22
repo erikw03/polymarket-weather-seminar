@@ -12,13 +12,20 @@ name: hourly-ingestion
 #   them. The hourly data commits keep the repo active, so this self-sustains.
 # - Use a PUBLIC repo for unlimited Actions minutes (the data is public anyway).
 
+# ============================================================================
+# PROJEKT ABGESCHLOSSEN (Seminarabgabe 08/2026, Data Freeze 14.08.2026).
+# Die automatische Erfassung ist dauerhaft eingestellt (22.10.2026):
+#   1. Der Zeitplan-Trigger unten ist auskommentiert.
+#   2. Der Workflow ist in GitHub zusaetzlich auf "disabled" gesetzt.
+#   3. Der externe Auslöser (cron-job.org) wurde entfernt, sein Zugriffstoken
+#      widerrufen.
+# Der Korpus liegt eingefroren in data/raw/ und docs/freeze/. Der Workflow
+# bleibt als Beleg der Umsetzung erhalten und ist nur noch manuell startbar.
+# ============================================================================
 on:
-  schedule:
-    # Run at :17 past every hour (UTC). NOT :00 — the top of the hour is the most
-    # congested slot on GitHub's shared scheduler, so runs there get delayed or
-    # skipped. An off-peak minute is far more reliable for hourly collection.
-    - cron: "17 * * * *"
-  workflow_dispatch: {}       # allow manual "Run workflow" from the Actions tab
+  # schedule:
+  #   - cron: "17 * * * *"    # eingestellt, s. o.
+  workflow_dispatch: {}       # nur noch manuell startbar
 
 # Allow the job to push commits back to the repo.
 permissions:
